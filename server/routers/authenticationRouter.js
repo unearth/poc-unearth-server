@@ -4,7 +4,7 @@ module.exports = function(app){
   });
 
   app.post('/login', function(req, res){
-    res.send('Received login post request! Initiating login procedure.');
+    res.send('Received login post request! Initiating login procedure/send back token.');
   });
 
   app.get('/signup', function(req, res){
@@ -12,6 +12,6 @@ module.exports = function(app){
   });
 
   app.post('/signup', function(req, res){
-    res.send('Received signup post request! Initiating signup procedure.');
+    res.send('Received signup post request! Initiating signup procedure/send back token.');
   });
 };
