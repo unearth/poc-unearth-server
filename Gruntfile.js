@@ -12,7 +12,7 @@ module.exports = function(grunt) {
   // Grunt setup
   grunt.initConfig({
     jshint: {
-      files: ['public/client/**/*.js', 'server/**/*']
+      files: ['public/client/**/*.js', 'server/**/*.js']
     },
 
     mochaTest: {
