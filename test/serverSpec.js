@@ -1,12 +1,41 @@
 var chai = require('chai');
-var request = require('request');
+var request = require('supertest');
+var app = require('../server/app.js');
 
 var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
 
 describe('Server Routes', function() {
-  it('Does the Test', function() {
-    expect(true).to.equal(true);
+
+  it('should handle get requests to the waypoint router', function(done) {
+    request(app)
+      .get('/waypoint')
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
   });
+
+  it('should handle post requests for waypoints', function(done) {
+    request(app)
+      .post('/waypoint')
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(200);
+        done();
+      });
+  });
+
+  it('should return status code 404 for an invalid get request', function(done) {
+    request(app)
+      .get('/thisisnotaroute')
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(404);
+        done();
+      });
+  });
+
 });
