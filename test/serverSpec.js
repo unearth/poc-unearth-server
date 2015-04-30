@@ -21,7 +21,7 @@ describe('Server Routes', function() {
       })
   });
 
-  it('should return status code 200 for a post request to waypoint', function(){
+  it('should return status code 200 for a post request to waypoint', function() {
     request("http://localhost:3000")
       .post('/waypoint')
       .end(function(err, res){
@@ -33,7 +33,7 @@ describe('Server Routes', function() {
       })
   });
 
-  it('should return status code 404 for an invalid get request', function(){
+  it('should return status code 404 for an invalid get request', function() {
     request("http://localhost:3000")
       .get('/secrets')
       .end(function(err,res){
@@ -44,4 +44,5 @@ describe('Server Routes', function() {
         done;
       })
   });
+
 });
