@@ -1,48 +1,41 @@
 var chai = require('chai');
-var request = require('request');
+var request = require('supertest');
+var app = require('../server/app.js');
 
 var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
-var request = require('supertest');
-var app = require('../server/app.js').app;
 
 describe('Server Routes', function() {
 
-  it('should return status code 200 for a get request to waypoint', function() {
-    request("http://localhost:3000")
+  it('should handle get requests to the waypoint router', function(done) {
+    request(app)
       .get('/waypoint')
-      .end(function(err, res){
-        if(err){
-          throw err;
-        }
-        res.should.have.status(200);
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(200);
         done();
-      })
+      });
   });
 
-  it('should return status code 200 for a post request to waypoint', function() {
-    request("http://localhost:3000")
+  it('should handle post requests for waypoints', function(done) {
+    request(app)
       .post('/waypoint')
-      .end(function(err, res){
-        if(err){
-          throw err;
-        }
-        res.should.have.status(200);
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(200);
         done();
-      })
+      });
   });
 
-  it('should return status code 404 for an invalid get request', function() {
-    request("http://localhost:3000")
-      .get('/secrets')
-      .end(function(err,res){
-        if(err){
-          throw err;
-        }
-        res.should.have.status(404);
-        done;
-      })
+  it('should return status code 404 for an invalid get request', function(done) {
+    request(app)
+      .get('/thisisnotaroute')
+      .end(function(error, response){
+        if(error){ throw error; }
+        expect(response.statusCode).to.equal(404);
+        done();
+      });
   });
 
 });
