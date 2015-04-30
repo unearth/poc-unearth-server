@@ -11,3 +11,4 @@ When you're writing commits, try to organize them into smaller parts containing 
 
 
 * Follow the title with " - " as bullet points for any further information we'll need about the commit.
+
