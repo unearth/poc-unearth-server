@@ -1,11 +1,15 @@
 module.exports = function(app, passport) {
-  app.post('/login', function(request, response) {
-    // Do Passport Stuff
-  });
+  app.post('/login',
+    passport.authenticate('local-login', { successRedirect: '/'
+      failureRedirect: '/login',
+      failureFlash: 'true'})
+  );
 
-  app.post('/signup', function(request, response) {
-    // Do Passport Stuff
-  });
+  app.post('/signup',
+      passport.authenticate('local-login', { successRedirect: '/'
+      failureRedirect: '/signup',
+      failureFlash: 'true'})
+  );
 
   app.post('/profile', isLoggedIn, function(request, response) {
     // Send profile data
