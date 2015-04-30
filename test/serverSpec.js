@@ -10,7 +10,7 @@ describe('Server Routes', function() {
 
   it('should handle get requests to the waypoint router', function(done) {
     request(app)
-      .get('/waypoint')
+      .get('/user/waypoints')
       .end(function(error, response){
         if(error){ throw error; }
         expect(response.statusCode).to.equal(200);
@@ -20,7 +20,7 @@ describe('Server Routes', function() {
 
   it('should handle post requests for waypoints', function(done) {
     request(app)
-      .post('/waypoint')
+      .post('/user/waypoints')
       .end(function(error, response){
         if(error){ throw error; }
         expect(response.statusCode).to.equal(200);

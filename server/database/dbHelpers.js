@@ -2,9 +2,10 @@ var dbUtils = require('./dbUtils');
 
 module.exports.insertUser = function(username, password, callback) {
   callback = callback || function(value){ return value; };
-  var query = "INSERT into users (username, password)" + "VALUES ('" + dbUtils.sanitize(username) + "','" + dbUtils.sanitize(password) + "');";
+  var query = "INSERT into users (username)" + "VALUES ('" + dbUtils.sanitize(username) + "','" + dbUtils.sanitize(password) + "');";
   dbUtils.makeQuery(query, function(error, rows){
     dbUtils.handleErrors(error, rows, callback);
+    // runs `callback(null, rows);` on success
   });
 };
 
