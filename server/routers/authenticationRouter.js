@@ -1,11 +1,32 @@
 module.exports = function(app, passport) {
-  app.post('/login', function(request, response) {
-    // Do Passport Stuff
-  });
+  app.post('/login',
+    passport.authenticate('local-login', { successRedirect: '/'
+      failureRedirect: '/login',
+      failureFlash: 'true'})
+  );
 
-  app.post('/signup', function(request, response) {
-    // Do Passport Stuff
-  });
+  app.post('/signup',
+      passport.authenticate('local-login', { successRedirect: '/'
+      failureRedirect: '/signup',
+      failureFlash: 'true'})
+  );
+
+  // Redirect to facebook for authentication
+  app.get('/auth/facebook', passport.authenticate('facebook'));
+
+  // Facebook will redirect user to one of the following URLs
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
+
+  // Redirect to google for authentication
+  app.get('/auth/google',
+    passport.authenticate('google'));
+
+  // Google will redirect user to one of the following URLs
+  app.get('/auth/google/callback',
+    passport.authenticate('google', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
 
   app.post('/profile', isLoggedIn, function(request, response) {
     // Send profile data
