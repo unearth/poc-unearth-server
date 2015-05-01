@@ -41,9 +41,9 @@ CREATE TABLE waypoints (
 -- ---
 
 CREATE TABLE local_auth (
+  "user_id" INTEGER NOT NULL,
   "email" TEXT NOT NULL,
   "password" TEXT NOT NULL,
-  "user_id" INTEGER NOT NULL,
   PRIMARY KEY ("email"),
   FOREIGN KEY ("user_id") REFERENCES users ("user_id") ON DELETE CASCADE
 );
@@ -72,7 +72,7 @@ CREATE TABLE twitter_auth (
   "twitter_id" TEXT NOT NULL,
   "user_id" INTEGER NOT NULL,
   "token" TEXT NOT NULL,
-  "displayName" TEXT NOT NULL,
+  "display_name" TEXT NOT NULL,
   "username" TEXT NOT NULL,
   PRIMARY KEY ("twitter_id"),
   FOREIGN KEY ("user_id") REFERENCES users ("user_id") ON DELETE CASCADE
