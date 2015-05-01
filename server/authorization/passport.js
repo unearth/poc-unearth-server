@@ -1,5 +1,7 @@
 // Imports our Dependencies
 var LocalStrategy = require('passport-local').Strategy;
+var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var db = require('../database/dbHelpers');
 var utils = require('./authUtils.js');
 
@@ -57,5 +59,49 @@ module.exports = function(passport) {
       });
     })
   );
+
+
+  if (!process.env.FACEBOOK_ID) {
+  var key = require('../../config.js').facebook;
+  var callbackCurrentURLFacebook = "http://localhost:3000/auth/facebook/callback";
+  } else {
+    var callbackCurrentURLFacebook = process.env.CALLBACK_URLFACEBOOK;
+  }
+
+  passport.use(new FacebookStrategy({
+      clientID: process.env.GOOGLE_ID || key.clientID,
+      clientSecret: process.env.GOOGLE_SECRET || key.clientSecret,
+      callbackURL: callbackCurrentURLFacebook
+    },
+    function(accessToken, refreshToken, profile, done) {
+      // Storage calls to DB
+      function(accessToken, refreshToken, profile, done) {
+        process.nextTick(function () {
+          return done(null, profile);
+      });
+    }
+  ));
+
+
+  if (!process.env.GOOGLE_ID) {
+  var key = require('../../config.js').google;
+  var callbackCurrentURLGoogle = "http://localhost:3000/auth/google/callback";
+  } else {
+    var callbackCurrentURLGoogle = process.env.CALLBACK_URLGOOGLE;
+  }
+
+  passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_ID || key.clientID,
+      clientSecret: process.env.GOOGLE_SECRET || key.clientSecret,
+      callbackURL: callbackCurrentURLGoogle
+    },
+    function(accessToken, refreshToken, profile, done) {
+      process.nextTick(function () {
+        // Storage calls to DB
+        return done(null, profile);
+      });
+    }
+  ));
+
 };
 

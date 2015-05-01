@@ -11,6 +11,23 @@ module.exports = function(app, passport) {
       failureFlash: 'true'})
   );
 
+  // Redirect to facebook for authentication
+  app.get('/auth/facebook', passport.authenticate('facebook'));
+
+  // Facebook will redirect user to one of the following URLs
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
+
+  // Redirect to google for authentication
+  app.get('/auth/google',
+    passport.authenticate('google'));
+
+  // Google will redirect user to one of the following URLs
+  app.get('/auth/google/callback',
+    passport.authenticate('google', { successRedirect: '/',
+                                      failureRedirect: '/login' }));
+
   app.post('/profile', isLoggedIn, function(request, response) {
     // Send profile data
     request.send(profile);
