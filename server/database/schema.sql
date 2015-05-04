@@ -18,7 +18,8 @@ DROP TABLE IF EXISTS "users";
 
 CREATE TABLE users (
   "user_id" SERIAL,
-  "username" TEXT NOT NULL,
+  "email" TEXT NOT NULL,
+  "password" TEXT NOT NULL,
   PRIMARY KEY ("user_id")
 );
 
@@ -39,14 +40,6 @@ CREATE TABLE waypoints (
 -- ---
 -- Auth Tables
 -- ---
-
-CREATE TABLE local_auth (
-  "user_id" INTEGER NOT NULL,
-  "email" TEXT NOT NULL,
-  "password" TEXT NOT NULL,
-  PRIMARY KEY ("email"),
-  FOREIGN KEY ("user_id") REFERENCES users ("user_id") ON DELETE CASCADE
-);
 
 CREATE TABLE facebook_auth (
   "facebook_id" TEXT NOT NULL,

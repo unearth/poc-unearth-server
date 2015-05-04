@@ -8,58 +8,45 @@ var expect = chai.expect;
 
 dbHelpers.clearTables();
 
-describe('Database - Users', function() {
+describe('Database - Adding Local Accounts', function() {
+  var userId = null;
 
-  it('should insert users to the database', function(done) {
-    var user = test.users[0];
-    dbHelpers.insertUser(user.username, user.password, function(error){
-      if(error){ throw error; }
-      dbHelpers.getUser(user.username, function(error, rows){
-        if(error){ throw error; }
-        expect(rows.length).to.equal(1);
-        expect(rows[0].username).to.equal(user.username);
-        expect(rows[0].password).to.equal(user.password);
-        done();
-      });
+  it('should add a user to the database and return its user ID', function(done) {
+    dbHelpers.addUser(test.users[0].email, test.users[0].password, function(error, user){
+      expect(user.user_id).to.be.a('number');
+      expect(user.email).to.equal(test.users[0].email);
+      expect(user.password).to.equal(test.users[0].password);
+      done();
     });
   });
 
-  it('should delete users from the database', function(done) {
-    var waypoint = test.waypoints[0];
-    var user = test.users[0];
-    dbHelpers.insertWaypoint(waypoint.userId, waypoint.longitude, waypoint.latitude, function(error){
-      if(error){ throw error; }
-      dbHelpers.getUser(user.username, function(error, rows){
-        if(error){ throw error; }
-        dbHelpers.deleteUser(rows[0].user_id, function(error, rows){
-          if(error){ throw error; }
-          expect(Array.isArray(rows)).to.equal(true);
-          done();
-        });
-      });
+  it('should get user from the database', function(done) {
+    dbHelpers.getUser(test.users[0].email, function(error, user){
+      expect(user.user_id).to.be.a('number');
+      expect(user.email).to.equal(test.users[0].email);
+      expect(user.password).to.equal(test.users[0].password);
+      userId = user.user_id;
+      done();
     });
   });
 });
 
 describe('Database - Waypoints', function() {
-
   it('should insert and retreive waypoints to and from the database', function(done) {
     var user = test.users[1];
     var waypoint = test.waypoints[1];
-    dbHelpers.insertUser(user.username, user.password, function(error){
+    dbHelpers.addUser(user.email, user.password, function(error){
       if(error){ throw error; }
-      dbHelpers.insertWaypoint(waypoint.userId, waypoint.longitude, waypoint.latitude, function(error){
+      dbHelpers.addWaypoint(waypoint.userId, waypoint.longitude, waypoint.latitude, function(error){
         if(error){ throw error; }
-        dbHelpers.getUser(user.username, function(error, rows){
+        dbHelpers.getUser(user.email, function(error, user){
           if(error){ throw error; }
-          expect(rows.length).to.equal(1);
-          expect(rows[0].user_id).to.exist();
-          expect(rows[0].username).to.equal(user.username);
-          expect(rows[0].password).to.equal(user.password);
-          dbHelpers.getWaypoints(rows[0].user_id, function(error, rows){
+          expect(user.user_id).to.exist();
+          expect(user.email).to.equal(user.email);
+          dbHelpers.getWaypoints(user.user_id, function(error, waypoints){
             if(error){ throw error; }
-            expect(rows[0].longitude).to.equal(waypoint.longitude);
-            expect(rows[0].latitude).to.equal(waypoint.latitude);
+            expect(waypoints[0].longitude).to.equal(waypoint.longitude);
+            expect(waypoints[0].latitude).to.equal(waypoint.latitude);
             done();
           });
         });

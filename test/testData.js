@@ -1,13 +1,13 @@
 module.exports.users = [
-  { username: 'Joe',
+  { email: 'Joe@gmail.com',
     password: 'mysecretpassword'},
-  { username: 'Melony',
+  { email: 'Melony@gmail.com',
     password: 'ihaveasecurepassword'},
-  { username: 'Brian',
+  { email: 'Brian@gmail.com',
     password: 'mysecrethashedpassword'},
-  { username: 'Freddy',
+  { email: 'Freddy@gmail.com',
     password: 'I also have a password'},
-  { username: 'Yolo',
+  { email: 'Yolo@gmail.com',
     password: 'yoloyoloyolo'}
 ];
 
