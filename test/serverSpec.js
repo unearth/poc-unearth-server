@@ -8,22 +8,22 @@ var expect = chai.expect;
 
 describe('Server Routes', function() {
 
-  it('should handle get requests to the waypoint router', function(done) {
+  it('should handle unauthorized get requests to the waypoint router', function(done) {
     request(app)
-      .get('/user/waypoints')
+      .get('/waypoints')
       .end(function(error, response){
         if(error){ throw error; }
-        expect(response.statusCode).to.equal(200);
+        expect(response.statusCode).to.equal(401);
         done();
       });
   });
 
-  it('should handle post requests for waypoints', function(done) {
+  it('should handle unauthorized post requests for waypoints', function(done) {
     request(app)
-      .post('/user/waypoints')
+      .post('/waypoints')
       .end(function(error, response){
         if(error){ throw error; }
-        expect(response.statusCode).to.equal(200);
+        expect(response.statusCode).to.equal(401);
         done();
       });
   });
