@@ -1,25 +1,25 @@
 module.exports.users = [
-  { username: 'Joe',
+  { email: 'Joe@gmail.com',
     password: 'mysecretpassword'},
-  { username: 'Melony',
+  { email: 'Melony@gmail.com',
     password: 'ihaveasecurepassword'},
-  { username: 'Brian',
+  { email: 'Brian@gmail.com',
     password: 'mysecrethashedpassword'},
-  { username: 'Freddy',
+  { email: 'Freddy@gmail.com',
     password: 'I also have a password'},
-  { username: 'Yolo',
+  { email: 'Yolo@gmail.com',
     password: 'yoloyoloyolo'}
 ];
 
-module.exports.waypoints = (function() {
+module.exports.waypoints = ( function() {
 
   var results = [];
 
-  for(var i = 1; i <= 3; i++){
+  for (var i = 1; i <= 3; i++) {
     results.push({
       userId: i,
-      longitude: Math.round(Math.random()*100000) / 100,
-      latitude: Math.round(Math.random()*100000) / 100
+      longitude: Math.round( Math.random()*100000 ) / 100,
+      latitude:  Math.round( Math.random()*100000 ) / 100
     });
   }
   return results;
