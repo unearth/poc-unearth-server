@@ -11,8 +11,8 @@ describe('Server Routes', function() {
   it('should handle unauthorized get requests to the waypoint router', function(done) {
     request(app)
       .get('/waypoints')
-      .end(function(error, response){
-        if(error){ throw error; }
+      .end( function(error, response) {
+        if (error) { throw error; }
         expect(response.statusCode).to.equal(401);
         done();
       });
@@ -21,8 +21,8 @@ describe('Server Routes', function() {
   it('should handle unauthorized post requests for waypoints', function(done) {
     request(app)
       .post('/waypoints')
-      .end(function(error, response){
-        if(error){ throw error; }
+      .end( function(error, response) {
+        if (error) { throw error; }
         expect(response.statusCode).to.equal(401);
         done();
       });
@@ -31,8 +31,8 @@ describe('Server Routes', function() {
   it('should return status code 404 for an invalid get request', function(done) {
     request(app)
       .get('/thisisnotaroute')
-      .end(function(error, response){
-        if(error){ throw error; }
+      .end( function(error, response) {
+        if (error) { throw error; }
         expect(response.statusCode).to.equal(404);
         done();
       });

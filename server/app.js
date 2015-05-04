@@ -25,51 +25,52 @@ app.use(passport.initialize());
 ////////////////////////
 // ROUTES
 
-app.post('/login', authController.isAuthenticated, function(request, response){
+app.post('/login', authController.isAuthenticated, function(request, response) {
   response.send('Login isn\'t a feature yet.  Please send your password with each request');
 });
 
-app.post('/signup', function(request, response){
-  if(request.body.email && request.body.password){
-    dbHelpers.addUser(request.body.email, authUtils.hash(request.body.password), function(error, user){
+app.post('/signup', function(request, response) {
+
+  if (request.body.email && request.body.password) {
+    dbHelpers.addUser(request.body.email, authUtils.hash(request.body.password), function(error, user) {
       response.send(user);
     });
-  } else{
+  } else {
     response.send('Incorrect Data');
   }
 });
 
 app.get('/waypoints', authController.isAuthenticated, function(request, response) {
   var email = request.headers.email;
-  if(email){
-    dbHelpers.getUser(email, function(error, user){
-      if(error){ response.send(error); }
-      if(!user){ response.send('This isn\'t an existing user!'); }
+  if (email) {
+    dbHelpers.getUser(email, function(error, user) {
+      if (error) { response.send(error); }
+      if (!user) { response.send('This isn\'t an existing user!'); }
 
-      dbHelpers.getWaypoints(user.user_id, function(error, waypoints){
-        if(error){ response.send(error); }
+      dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
+        if (error) { response.send(error); }
         response.send(waypoints);
       });
     });
-  }else {
+  } else {
     response.send('Invalid Data');
   }
 });
 
 app.post('/waypoints', authController.isAuthenticated, function(request, response) {
   var email = request.body.email;
-  if(email){
+  if (email) {
     dbHelpers.getUser(email, function(error, user){
-      dbHelpers.addWaypoint(user.user_id, request.body.longitude,request.body.latitude, function(error){
+      dbHelpers.addWaypoint(user.user_id, request.body.longitude,request.body.latitude, function(error) {
         console.log(user);
-        if(error){
+        if (error) {
           response.send(error);
           throw error;
         }
         response.send("posted!");
       });
     });
-  } else{
+  } else {
     response.send('Invalid Data');
   }
 });
@@ -80,7 +81,7 @@ app.get('/logout', function(request, response) {
 
 
 // Catches 404 and forwards to error handler
-app.use(function(request, response) {
+app.use( function(request, response) {
   var error = new Error('Not Found');
   response.status(404).send(error);
 });

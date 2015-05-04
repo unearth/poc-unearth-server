@@ -1,11 +1,12 @@
 var passport = require('passport');
+var BasicStrategy = require('passport-http').BasicStrategy;
+
 var util = require('./authUtils');
 var dbHelpers = require('../database/dbHelpers');
-var BasicStrategy = require('passport-http').BasicStrategy;
 
 passport.use('basic-login', new BasicStrategy(
   function(email, password, done) {
-    dbHelpers.getUser(email, function(error, user){
+    dbHelpers.getUser(email, function(error, user) {
 
       if (error) { return done(error); }
 
@@ -13,7 +14,7 @@ passport.use('basic-login', new BasicStrategy(
       if (!user) { return done(null, false); }
 
       // Make sure the password is correct
-      if( !util.validPassword(password, user.password) ){
+      if( !util.validPassword(password, user.password) ) {
         return done(null, false);
       }
 
