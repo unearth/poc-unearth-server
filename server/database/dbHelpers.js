@@ -9,28 +9,20 @@ var addUser = function(email, password, callback) {
   var params = [email, password];
 
   dbUtils.makeQuery(query, params, function(error) {
-    if (error) { dbUtils.handleError(error); }
-    getUser(email, callback);
+    if (error) { dbUtils.handleError(error, callback); }
+    getUser(email, 'email', callback);
   });
 };
 
-var getUser = function(email, callback) {
+// userData will be a token, a userId, or an email
+var getUser = function(userData, dataType, callback) {
   callback = callback || function(value) { return value; };
-  var query = "SELECT * FROM users WHERE email = $1;";
-  var params = [email];
+  var query = "SELECT * FROM users WHERE " + dataType + " = $1;";
+  var params = [userData];
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error); }
-    callback(null, result.rows[0]);
-  });
-};
-
-var getUserById = function(userId, callback) {
-  callback = callback || function(value) { return value; };
-  var query = "SELECT * FROM users WHERE user_id = $1;";
-  var params = [userId];
-  dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error); }
-    callback(null, result.rows[0]);
+    if (error) { dbUtils.handleError(error, callback); }
+    var user = (result && result.rows[0]) ? result.rows[0] : null;
+    callback(null,  user);
   });
 };
 
@@ -39,31 +31,56 @@ var deleteUser = function(userId, callback) {
   var query = "DELETE FROM users WHERE user_id = $1;";
   var params = [userId];
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error); }
-    callback(null, result.rows[0]);
+    if (error) { dbUtils.handleError(error, callback); }
+    var user = (result && result.rows) ? result.rows[0] : null;
+    callback(null, user);
   });
 };
 
+////////////////////////
+// TOKEN ROUTES
+
+var addToken = function(token, userId, callback) {
+  callback = callback || function(value) { return value; };
+  var query = "UPDATE users SET token = $1 WHERE user_id = $2;";
+  var params = [token, userId];
+  console.log(token);
+  console.log(userId);
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    callback(null, result);
+  });
+};
+
+var deleteToken = function(token, callback) {
+  callback = callback || function(value) { return value; };
+  var query = "UPDATE users SET token = $1 WHERE token = $2;";
+  var params = [null, token];
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    callback(null, result);
+  });
+};
 
 ////////////////////////
 // WAYPOINT ROUTES
 
-var addWaypoint = function(userId, longitude, latitude, callback) {
+var addWaypoint = function(userId, latitude, longitude, callback) {
   callback = callback || function(value) { return value; };
-  var query = "INSERT into waypoints (user_id, longitude, latitude)" + "VALUES ($1,$2,$3);";
-  var params = [userId, longitude, latitude];
+  var query = "INSERT into waypoints (user_id, latitude, longitude)" + "VALUES ($1,$2,$3);";
+  var params = [userId, latitude, longitude];
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error); }
+    if (error) { dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
 
 var getWaypoints = function(userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = "SELECT * FROM waypoints WHERE user_id = $1;";
+  var query = "SELECT latitude, longitude FROM waypoints WHERE user_id = $1;";
   var params = [userId];
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error); }
+    if (error) { dbUtils.handleError(error, callback); }
     callback(null, result.rows);
   });
 };
@@ -75,7 +92,7 @@ var clearTables = function(callback) {
   callback = callback || function(value) { return value; };
   var query = "TRUNCATE users RESTART IDENTITY CASCADE";
   dbUtils.makeQuery(query, [], function(error, result) {
-    if (error) { dbUtils.handleError(error); }
+    if (error) { dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -84,8 +101,9 @@ var clearTables = function(callback) {
 module.exports = {
   addUser: addUser,
   getUser: getUser,
-  getUserById: getUserById,
   deleteUser: deleteUser,
+  addToken: addToken,
+  deleteToken: deleteToken,
   addWaypoint: addWaypoint,
   getWaypoints: getWaypoints,
   clearTables: clearTables
