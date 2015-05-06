@@ -20,6 +20,7 @@ CREATE TABLE users (
   "user_id" SERIAL,
   "email" TEXT NOT NULL,
   "password" TEXT NOT NULL,
+  "token" TEXT,
   PRIMARY KEY ("user_id")
 );
 

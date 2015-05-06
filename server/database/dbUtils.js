@@ -17,6 +17,7 @@ module.exports.handleError = function(error, callback) {
   }
 };
 
+// Handles any database queries
 module.exports.makeQuery = function(queryString, parameters, callback) {
   client.query(queryString, parameters, function(error, result) {
     if(error) {
