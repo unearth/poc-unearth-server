@@ -8,7 +8,7 @@ var map = L.mapbox.map('map', 'travisjn.67abbc98').setView(mapViewStart, 16);
 
 var drawMap = function(coordinates) {
 
-  // Delete old layers
+  // Deletes old layers
   map.eachLayer(function (layer) {
     if (layer._leaflet_id > 25) {
       map.removeLayer(layer);
@@ -31,7 +31,8 @@ var drawMap = function(coordinates) {
 };
 
 var getWaypoints = function() {
-  // Send a get request for waypoints
+  
+  // Sends a get request for waypoints
   $.ajax({
     type: "GET",
     url: "http://localhost:3000/waypoints",
@@ -40,10 +41,9 @@ var getWaypoints = function() {
     headers: {
       "Authorization": "Basic " + btoa("ben@ben.com" + ":" + "mysecurepassword")
     }
-  }).done(function(data){
+  }).done(function(data) {
     console.log('hello');
   });
-    // drawMap from waypoints
+
 };
 getWaypoints();
-//setInterval(getWaypoints, 5000);
