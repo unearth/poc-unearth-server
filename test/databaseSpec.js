@@ -8,7 +8,7 @@ var expect = chai.expect;
 
 dbHelpers.clearTables();
 
-describe('Database - Adding Local Accounts', function() {
+describe('Database ', function() {
   var userId = null;
 
   it('should add a user to the database and return its user ID', function(done) {
@@ -23,7 +23,7 @@ describe('Database - Adding Local Accounts', function() {
 
   it('should get user from the database', function(done) {
 
-    dbHelpers.getUser(test.users[0].email, function(error, user) {
+    dbHelpers.getUser(test.users[0].email, 'email', function(error, user) {
       expect(user.user_id).to.be.a('number');
       expect(user.email).to.equal(test.users[0].email);
       expect(user.password).to.equal(test.users[0].password);
@@ -41,18 +41,18 @@ describe('Database - Waypoints', function() {
     dbHelpers.addUser(user.email, user.password, function(error) {
       if (error) { throw error; }
 
-      dbHelpers.addWaypoint(waypoint.userId, waypoint.longitude, waypoint.latitude, function(error) {
+      dbHelpers.addWaypoint(waypoint.userId, waypoint.latitude, waypoint.longitude, function(error) {
         if (error) { throw error; }
 
-        dbHelpers.getUser(user.email, function(error, user) {
+        dbHelpers.getUser(user.email, 'email', function(error, user) {
           if (error) { throw error; }
           expect(user.user_id).to.exist();
           expect(user.email).to.equal(user.email);
 
           dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
             if (error) { throw error; }
-            expect(waypoints[0].longitude).to.equal(waypoint.longitude);
             expect(waypoints[0].latitude).to.equal(waypoint.latitude);
+            expect(waypoints[0].longitude).to.equal(waypoint.longitude);
             done();
           });
         });
