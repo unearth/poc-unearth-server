@@ -24,8 +24,8 @@ module.exports = function(app, authController) {
 
     var token = request.headers.authorization.split(' ')[1];
 
-    dbHelpers.deleteToken(token, function(error, user){
-      if (error) {  response.json({error: error });  }
+    dbHelpers.deleteToken(token, function(error, user) {
+      if (error) { response.json({error: error}); }
       response.json({success: 'Session has been removed!'});
     });
   });
