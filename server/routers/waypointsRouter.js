@@ -7,7 +7,7 @@ module.exports = function(app, authController) {
   app.get('/', authController.tokenAuth, function(request, response) {
 
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { response.json({error: error }); }
+      if (error) { response.json({error: error}); }
       if (!user) { response.json({error: 'This isn\'t an existing user!' }); }
 
       dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
@@ -24,8 +24,8 @@ module.exports = function(app, authController) {
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user){
 
       dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
-        if (error) { response.json({error: error }); }
-        if (!user) { response.json({error: 'This isn\'t an existing user!' }); }
+        if (error) { response.json({error: error}); }
+        if (!user) { response.json({error: 'This isn\'t an existing user!'}); }
         response.json({success: 'Waypoints have been posted!'});
       });
     });

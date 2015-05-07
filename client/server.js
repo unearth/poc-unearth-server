@@ -22,7 +22,7 @@ var serverCallback = function(incomingMessage, response) {
     }
 
     // If the requested file is a directory, append our index.html
-    if(fs.statSync(file).isDirectory()){
+    if(fs.statSync(file).isDirectory()) {
       file += 'index.html';
     }
 

@@ -5,7 +5,7 @@ var dbUtils = require('./dbUtils');
 
 var addUser = function(email, password, callback) {
   callback = callback || function(value) { return value; };
-  var query = "INSERT into users (email, password)" + "VALUES ($1, $2);";
+  var query = 'INSERT into users (email, password) VALUES ($1, $2);';
   var params = [email, password];
 
   dbUtils.makeQuery(query, params, function(error) {
@@ -14,10 +14,10 @@ var addUser = function(email, password, callback) {
   });
 };
 
-// userData will be a token, a userId, or an email
+// userData is a token, a userId, or an email
 var getUser = function(userData, dataType, callback) {
   callback = callback || function(value) { return value; };
-  var query = "SELECT * FROM users WHERE " + dataType + " = $1;";
+  var query = 'SELECT * FROM users WHERE ' + dataType + ' = $1;';
   var params = [userData];
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
@@ -28,7 +28,7 @@ var getUser = function(userData, dataType, callback) {
 
 var deleteUser = function(userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = "DELETE FROM users WHERE user_id = $1;";
+  var query = 'DELETE FROM users WHERE user_id = $1;';
   var params = [userId];
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
@@ -42,10 +42,8 @@ var deleteUser = function(userId, callback) {
 
 var addToken = function(token, userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = "UPDATE users SET token = $1 WHERE user_id = $2;";
+  var query = 'UPDATE users SET token = $1 WHERE user_id = $2;';
   var params = [token, userId];
-  console.log(token);
-  console.log(userId);
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
     callback(null, result);
@@ -54,7 +52,7 @@ var addToken = function(token, userId, callback) {
 
 var deleteToken = function(token, callback) {
   callback = callback || function(value) { return value; };
-  var query = "UPDATE users SET token = $1 WHERE token = $2;";
+  var query = 'UPDATE users SET token = $1 WHERE token = $2;';
   var params = [null, token];
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
@@ -89,7 +87,7 @@ var addWaypoints = function(userId, waypoints, callback) {
 
 var getWaypoints = function(userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = "SELECT latitude, longitude FROM waypoints WHERE user_id = $1;";
+  var query = 'SELECT latitude, longitude FROM waypoints WHERE user_id = $1;';
   var params = [userId];
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
@@ -102,7 +100,7 @@ var getWaypoints = function(userId, callback) {
 
 var clearTables = function(callback) {
   callback = callback || function(value) { return value; };
-  var query = "TRUNCATE users RESTART IDENTITY CASCADE";
+  var query = 'TRUNCATE users RESTART IDENTITY CASCADE;';
   dbUtils.makeQuery(query, [], function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
     callback(null, result);
