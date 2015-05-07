@@ -23,7 +23,7 @@ module.exports = function(app, authController) {
 
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user){
 
-      dbHelpers.addWaypoint(user.user_id, request.body.latitude, request.body.longitude, function(error) {
+      dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
         if (error) { response.json({error: error }); }
         if (!user) { response.json({error: 'This isn\'t an existing user!' }); }
         response.json({success: 'Waypoints have been posted!'});
