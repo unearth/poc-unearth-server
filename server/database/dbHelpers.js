@@ -63,10 +63,22 @@ var deleteToken = function(token, callback) {
 ////////////////////////
 // WAYPOINT ROUTES
 
-var addWaypoint = function(userId, latitude, longitude, callback) {
+var addWaypoints = function(userId, waypoints, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT into waypoints (user_id, latitude, longitude) VALUES ($1,$2,$3);';
-  var params = [userId, latitude, longitude];
+  var query = "INSERT into waypoints (user_id, latitude, longitude) VALUES";
+  var params = [userId];
+
+  // Loops through the location array and adds them to the query string
+  for (var i = 0; i < waypoints.length; i++) {
+
+    // Prepares the query string for multiple inserts at the same time
+    params.push(waypoints[i].latitude, waypoints[i].longitude);
+    query = query + (' ($1' + ',$' + (i*2 + 2) + ',$' + (i*2 + 3) + ')');
+
+    // Adds a comma or semicolon at the end depending on whether the string is ending
+    query += (i === waypoints.length - 1) ? ';' : ',';
+  }
+
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
     callback(null, result);
@@ -102,7 +114,7 @@ module.exports = {
   deleteUser: deleteUser,
   addToken: addToken,
   deleteToken: deleteToken,
-  addWaypoint: addWaypoint,
+  addWaypoints: addWaypoints,
   getWaypoints: getWaypoints,
   clearTables: clearTables
 };
