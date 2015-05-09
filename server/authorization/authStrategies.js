@@ -21,7 +21,7 @@ passport.use( 'signup', new LocalStrategy({
 
     // Finds the user, using their email
     dbHelpers.getUser(email, 'email', function(error, user) {
-
+      console.log('user: ', user.email);
       // Sends an error if the database request fails
       if (error) {
         request.unearth.error = 'The request has failed!';
@@ -67,7 +67,7 @@ passport.use( 'login-local', new LocalStrategy({
     if(!request.unearth){ request.unearth = {}; }
 
     dbHelpers.getUser(email, 'email', function(error, user) {
-
+      console.log('user: ', user.email);
       if (error) { return done(error, false); }
 
       // No user found with that email
@@ -107,7 +107,7 @@ passport.use( 'login-token', new BearerStrategy({
     if(!request.unearth){ request.unearth = {}; }
 
     dbHelpers.getUser(token, 'token', function(error, user) {
-
+      console.log('user: ', user.email);
       // The request has failed
       if (error) { return done(error, false); }
 
