@@ -6,21 +6,11 @@ var morgan = require('morgan');
 var passport = require('passport');
 var bodyParser = require('body-parser');
 
-var dbHelpers = require('./database/dbHelpers');
 var authController = require('./authorization/authStrategies');
-
-// Logs requests
-app.use(morgan('dev'));
 
 // Parses post bodies
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-
-// Logs request properties
-app.use(function(request, response, next) {
-  console.log('data: ', request.body);
-  next();
-});
 
 // Initializes passport
 app.use(passport.initialize());
@@ -29,6 +19,14 @@ app.use(passport.initialize());
 app.use(function(request, response, next) {
   response.header("Access-Control-Allow-Origin", "*");
   response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
+// Logs request properties
+app.use(morgan('dev'));
+app.use(function(request, response, next) {
+  console.log('-------------------------------');
+  console.log('data: ', request.body);
   next();
 });
 
