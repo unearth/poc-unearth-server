@@ -67,11 +67,11 @@ var addWaypoints = function(userId, waypoints, callback) {
   callback = callback || function(value) { return value; };
   var query = "INSERT into waypoints (user_id, latitude, longitude) VALUES";
   var params = [userId];
-  console.log(waypoints);
+
   // Loops through the location array and adds them to the query string
   for (var i = 0; i < waypoints.length; i++) {
 
-    // Prepares the query string for multiple inserts at the same time
+    // Prepares the query string and params array for multiple inserts at the same time
     params.push(waypoints[i].latitude, waypoints[i].longitude);
     query = query + (' ($1' + ',$' + (i*2 + 2) + ',$' + (i*2 + 3) + ')');
 

@@ -16,13 +16,19 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+// Logs request properties
+app.use(function(request, response, next) {
+  console.log('data: ', request.body);
+  next();
+});
+
 // Initializes passport
 app.use(passport.initialize());
 
 // Allows CORS
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.use(function(request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
@@ -44,7 +50,7 @@ require('./routers/userRouter')(userRouter, authController);
 // Catches unknown routes and throws back a 404 response
 app.use( function(request, response) {
   var error = new Error('Not Found');
-  response.status(404).json({error: error });
+  response.status(404).json({error: error});
 });
 
 module.exports = app;
