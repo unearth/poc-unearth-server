@@ -5,6 +5,7 @@ module.exports = function(app, authController) {
     if (request.unearth.error) {
       response.sendStatus(403);
       response.json({error: request.unearth.error});
+      return;
     }
     response.json({token: request.unearth.token});
   });
@@ -12,20 +13,24 @@ module.exports = function(app, authController) {
   // Inserts a new user's email/password into the database
   // Creates and returns a token
   app.post('/signup', authController.signupAuth, function(request, response) {
+    // Sanitize
     if (request.unearth.error) {
       response.sendStatus(403);
       response.json({error: request.unearth.error});
+      return;
     }
     response.json({token: request.unearth.token});
   });
 
   // Removes a user's token from the database
   app.get('/logout', function(request, response) {
-
     var token = request.headers.authorization.split(' ')[1];
 
     dbHelpers.deleteToken(token, function(error, user) {
-      if (error) { response.json({error: error}); }
+      if (error) {
+        response.json({error: error});
+        return;
+      }
       response.json({success: 'Session has been removed!'});
     });
   });
