@@ -76,7 +76,7 @@ var addWaypoints = function(userId, waypoints, callback) {
     // waypoints[i][1] === longitude
     params.push(waypoints[i][0], waypoints[i][1]);
     query = query + (' ($1' + ',POINT($' + (i*2 + 2) + ',$' + (i*2 + 3) + '))');
-    console.log(query);
+
     // Adds a comma or semicolon at the end depending on whether the string is ending
     query += (i === waypoints.length - 1) ? ';' : ',';
   }

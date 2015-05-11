@@ -51,8 +51,8 @@ describe('Database - Waypoints', function() {
 
           dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
             if (error) { throw error; }
-            expect(testPoints.waypoints[0].latitude).to.equal(waypoints[0].latitude);
-            expect(testPoints.waypoints[0].longitude).to.equal(waypoints[0].longitude);
+            expect(testPoints.waypoints[0][0]).to.equal(waypoints[0][0]);
+            expect(testPoints.waypoints[0][1]).to.equal(waypoints[0][1]);
             done();
           });
         });
