@@ -65,16 +65,18 @@ var deleteToken = function(token, callback) {
 
 var addWaypoints = function(userId, waypoints, callback) {
   callback = callback || function(value) { return value; };
-  var query = "INSERT into waypoints (user_id, latitude, longitude) VALUES";
+  var query = "INSERT into waypoints (user_id, location) VALUES";
   var params = [userId];
 
   // Loops through the location array and adds them to the query string
   for (var i = 0; i < waypoints.length; i++) {
 
     // Prepares the query string and params array for multiple inserts at the same time
-    params.push(waypoints[i].latitude, waypoints[i].longitude);
-    query = query + (' ($1' + ',$' + (i*2 + 2) + ',$' + (i*2 + 3) + ')');
-
+    // waypoints[i][0] === latitude
+    // waypoints[i][1] === longitude
+    params.push(waypoints[i][0], waypoints[i][1]);
+    query = query + (' ($1' + ',POINT($' + (i*2 + 2) + ',$' + (i*2 + 3) + '))');
+    console.log(query);
     // Adds a comma or semicolon at the end depending on whether the string is ending
     query += (i === waypoints.length - 1) ? ';' : ',';
   }
@@ -87,10 +89,16 @@ var addWaypoints = function(userId, waypoints, callback) {
 
 var getWaypoints = function(userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT latitude, longitude FROM waypoints WHERE user_id = $1;';
+  var query = 'SELECT location FROM waypoints WHERE user_id = $1;';
   var params = [userId];
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
+
+    // Convert the database format into the format used in the frontend
+    for ( var i = 0; i < result.rows.length; i++ ) {
+      result.rows[i] = ([result.rows[i].location.x, result.rows[i].location.y]);
+    }
+
     callback(null, result.rows);
   });
 };
