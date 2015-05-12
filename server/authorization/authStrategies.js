@@ -37,7 +37,7 @@ passport.use( 'signup', new LocalStrategy({
       dbHelpers.addUser(email, authUtils.hash(password), function(error, user) {
         if(user){console.log('user: ', user.email);}
         // Creates token, saves it to the database, and sends it to the user
-        var token = authUtils.encodeToken(user);
+        var token = user.email + Date.now();
         var encryptedToken = authUtils.encodeToken(token);
         dbHelpers.addToken(token, user.user_id, function(error, success) {
           if(error){
@@ -79,7 +79,7 @@ passport.use( 'login-local', new LocalStrategy({
       }
 
       // Creates token, saves it to the database, and sends it to the user
-      var token = authUtils.encodeToken(user.password);
+      var token = user.email + Date.now();
       var encryptedToken = authUtils.encodeToken(token);
       dbHelpers.addToken(token, user.user_id, function(error, result) {
         if(error){ throw error; }
