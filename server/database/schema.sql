@@ -30,9 +30,8 @@ CREATE TABLE users (
 
 CREATE TABLE waypoints (
   "waypoint_id" SERIAL,
-  "latitude" REAL NOT NULL,
-  "longitude" REAL NOT NULL,
   "user_id" INTEGER NOT NULL,
+  "location" POINT NOT NULL,
   PRIMARY KEY ("waypoint_id"),
   FOREIGN KEY ("user_id") REFERENCES users ("user_id") ON DELETE CASCADE
 );
