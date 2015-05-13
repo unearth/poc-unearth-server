@@ -17,7 +17,7 @@ passport.use( 'signup', new LocalStrategy({
   function(request, email, password, done) {
 
     // Creates an unearth response object
-    if(!request.unearth){ request.unearth = {}; }
+    if (!request.unearth) {request.unearth = {};}
 
     // Finds the user, using their email
     dbHelpers.getUser(email, 'email', function(error, user) {
@@ -40,7 +40,7 @@ passport.use( 'signup', new LocalStrategy({
         var token = user.email + Date.now();
         var encryptedToken = authUtils.encodeToken(token);
         dbHelpers.addToken(token, user.user_id, function(error, success) {
-          if(error){
+          if (error) {
             request.unearth.error = 'Database call failed!';
             return done(null, true);
           }
@@ -67,11 +67,11 @@ passport.use( 'login-local', new LocalStrategy({
     if(!request.unearth){ request.unearth = {}; }
 
     dbHelpers.getUser(email, 'email', function(error, user) {
-      if(user){console.log('user: ', user.email);}
-      if (error) { return done(error, false); }
+      if (user) {console.log('user: ', user.email);}
+      if (error) {return done(error, false);}
 
       // No user found with that email
-      if (!user) { return done(null, false); }
+      if (!user) {return done(null, false);}
 
       // Makes sure the password is correct
       if( !authUtils.validPassword(password, user.password) ) {
@@ -82,7 +82,7 @@ passport.use( 'login-local', new LocalStrategy({
       var token = user.email + Date.now();
       var encryptedToken = authUtils.encodeToken(token);
       dbHelpers.addToken(token, user.user_id, function(error, result) {
-        if(error){ throw error; }
+        if(error){throw error;}
         request.unearth.token = encryptedToken;
         return done(null, true);
       });
@@ -109,10 +109,10 @@ passport.use( 'login-token', new BearerStrategy({
     dbHelpers.getUser(token, 'token', function(error, user) {
       if(user){console.log('user: ', user.email);}
       // The request has failed
-      if (error) { return done(error, false); }
+      if (error) {return done(error, false);}
 
       // No user found with that email
-      if (!user) { return done(null, false); }
+      if (!user) {return done(null, false);}
 
       // Sends back a token
       request.unearth.token = token;
