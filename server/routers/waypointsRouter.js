@@ -6,22 +6,24 @@ module.exports = function(app, authController) {
   // Sends pack an object of waypoints
   app.get('/', authController.tokenAuth, function(request, response) {
 
+    // TODO: Sanitize. Expect starting waypoint id default to 0
+
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) {
-        response.json({error: error});
+        response.status(500).json({error: error});
         return;
       }
       if (!user) {
-        response.json({error: 'This isn\'t an existing user!' });
+        response.status(409).json({error: 'This isn\'t an existing user!' });
         return;
       }
 
       dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
         if (error) {
-          response.json({error: error});
+          response.status(500).json({error: error});
           return;
         }
-        response.json({waypoints: waypoints});
+        response.status(200).json({waypoints: waypoints});
       });
     });
   });
@@ -29,21 +31,28 @@ module.exports = function(app, authController) {
   // Authenticates with a user's token
   // Posts an array of new waypoints to the database
   app.post('/', authController.tokenAuth, function(request, response) {
+
+    // TODO: Sanititze, Expect {waypoints:[]}
+
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user){
+      if (error) {
+        response.status(500).json({error: error});
+        return;
+      }
       if(!request.body.waypoints || request.body.waypoints.length < 1 ){
-        response.json({error: 'There are no waypoints!'});
+        response.status(409).json({error: 'There are no waypoints!'});
         return;
       }
       dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
         if (error) {
-          response.json({error: error});
+          response.status(500).json({error: error});
           return;
         }
         if (!user) {
-          response.json({error: 'This isn\'t an existing user!'});
+          response.status(409).json({error: 'This isn\'t an existing user!'});
           return;
         }
-        response.json({success: 'Waypoints have been posted!'});
+        response.status(200).json({success: 'Waypoints have been posted!'});
       });
     });
   });
