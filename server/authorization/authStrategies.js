@@ -29,7 +29,7 @@ passport.use( 'signup', new LocalStrategy({
       }
 
       // Sends an error if the user already exists
-      if(user){
+      if(!!user){
         request.unearth.error = 'This user already exists!';
         return done(null, true);
       }
@@ -120,6 +120,7 @@ passport.use( 'login-token', new BearerStrategy({
     });
   }
 ));
+
 
 module.exports = {
   signupAuth: passport.authenticate('signup', { session : false }),

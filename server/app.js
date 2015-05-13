@@ -22,13 +22,14 @@ app.use(function(request, response, next) {
   next();
 });
 
-// Logs request properties
+// Logs request data
 app.use(morgan('dev'));
 app.use(function(request, response, next) {
   console.log('-------------------------------');
   console.log('data: ', request.body);
   next();
 });
+
 
 ////////////////////////
 // ROUTES
