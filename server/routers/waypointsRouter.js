@@ -34,12 +34,12 @@ module.exports = function(app, authController) {
 
     // TODO: Sanititze, Expect {waypoints:[]}
 
-    dbHelpers.getUser(request.unearth.token, 'token', function(error, user){
+    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) {
         response.status(500).json({error: error});
         return;
       }
-      if(!request.body.waypoints || request.body.waypoints.length < 1 ){
+      if(!request.body.waypoints || request.body.waypoints.length < 1 ) {
         response.status(409).json({error: 'There are no waypoints!'});
         return;
       }
