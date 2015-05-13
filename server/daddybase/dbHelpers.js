@@ -104,7 +104,7 @@ var addUniqueWaypoints = function(userId, waypoints, callback) {
     // Removes any waypoints that already exists on our user's table
     var filteredWaypoints = waypoints.filter( function(item) {
       for(var i = 0; i < result.rows.length; i++) {
-        if(result.rows[i].location.x === item[0] && result.rows[i].location.y === item[1]){
+        if(result.rows[i].location.x === item[0] && result.rows[i].location.y === item[1]) {
           return false;
         }
       }
