@@ -36,12 +36,12 @@ describe('Database ', function() {
 describe('Database - Waypoints', function() {
   it('should insert and retreive waypoints to and from the database', function(done) {
     var user = test.users[1];
-    var waypoint = test.waypoints[1];
+    var testPoints = test.waypoints;
 
-    dbHelpers.addUser(user.email, user.password, function(error) {
+    dbHelpers.addUser(user.email, user.password, function(error, user) {
       if (error) { throw error; }
 
-      dbHelpers.addWaypoint(waypoint.userId, waypoint.latitude, waypoint.longitude, function(error) {
+      dbHelpers.addWaypoints(user.user_id, testPoints.waypoints, function(error) {
         if (error) { throw error; }
 
         dbHelpers.getUser(user.email, 'email', function(error, user) {
@@ -51,8 +51,8 @@ describe('Database - Waypoints', function() {
 
           dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
             if (error) { throw error; }
-            expect(waypoints[0].latitude).to.equal(waypoint.latitude);
-            expect(waypoints[0].longitude).to.equal(waypoint.longitude);
+            expect(testPoints.waypoints[0][0]).to.equal(waypoints[0][0]);
+            expect(testPoints.waypoints[0][1]).to.equal(waypoints[0][1]);
             done();
           });
         });

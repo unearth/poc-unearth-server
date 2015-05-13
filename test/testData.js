@@ -16,12 +16,13 @@ module.exports.waypoints = ( function() {
   var results = [];
 
   for (var i = 1; i <= 3; i++) {
-    results.push({
-      userId: i,
-      longitude: Math.round( Math.random()*100000 ) / 100,
-      latitude:  Math.round( Math.random()*100000 ) / 100
-    });
+    results.push(
+      [
+        Math.round( Math.random()*100000 ) / 100,
+        Math.round( Math.random()*100000 ) / 100
+      ]
+    );
   }
-  return results;
+  return {userId: 1, waypoints: results};
 })();
 

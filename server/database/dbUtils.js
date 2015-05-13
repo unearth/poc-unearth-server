@@ -21,7 +21,7 @@ module.exports.handleError = function(error, callback) {
 module.exports.makeQuery = function(queryString, parameters, callback) {
   client.query(queryString, parameters, function(error, result) {
     if(error) {
-      return callback(error, null);
+      callback(error, null);
     } else {
       callback(null, result);
     }
