@@ -3,13 +3,15 @@
 
 var dbUtils = require('./dbUtils');
 
-var addUser = function(email, password, callback) {
+var addUser = function(email, name, password, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT into users (email, name, password) VALUES ($1, $2) RETURNING *;';
-  var params = [email, password];
+  var query = 'INSERT into users (email, name, password) VALUES ($1, $2, $3) RETURNING *;';
+  var params = [email, name, password];
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
+    console.log(result);
+
     var user = (result && result.rows) ? result.rows[0] : null;
     callback(null, user);
   });
@@ -45,8 +47,8 @@ var deleteUser = function(userId, callback) {
 
 var inviteUserToGroup = function(groupId, senderId, receiverId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT INTO group_pending (group_id, sender_id, receiver_id) VALUES ($1, $2, $3);'
-  var params = [groupId, senderId, receiverId]
+  var query = 'INSERT INTO group_pending (group_id, sender_id, receiver_id) VALUES ($1, $2, $3);';
+  var params = [groupId, senderId, receiverId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
@@ -56,7 +58,7 @@ var inviteUserToGroup = function(groupId, senderId, receiverId, callback) {
 
 var deleteInvite = function(userId, groupId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'DELETE FROM group_pending WHERE receiver_id = $1 AND group_id $2;'
+  var query = 'DELETE FROM group_pending WHERE receiver_id = $1 AND group_id $2;';
   var params = [userId, groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -67,7 +69,7 @@ var deleteInvite = function(userId, groupId, callback) {
 
 var addToGroup = function(userId, groupId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT INTO group_join (user_id, group_id) VALUES ($1, $2) RETURNING $2;'
+  var query = 'INSERT INTO group_join (user_id, group_id) VALUES ($1, $2) RETURNING $2;';
   var params = [userId, groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -79,7 +81,7 @@ var addToGroup = function(userId, groupId, callback) {
 
 var createGroup = function(groupName, groupDescription, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT INTO groups (name, description) VALUES ($1, $2) RETURNING group_id;'
+  var query = 'INSERT INTO groups (name, description) VALUES ($1, $2) RETURNING group_id;';
   var params = [groupName, groupDescription];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -91,7 +93,7 @@ var createGroup = function(groupName, groupDescription, callback) {
 
 var groupListing = function(token) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT * FROM groups WHERE group_id = (SELECT group_id FROM group_join WHERE group_id = (SELECT user_id FROM users WHERE token = $1));'
+  var query = 'SELECT * FROM groups WHERE group_id = (SELECT group_id FROM group_join WHERE group_id = (SELECT user_id FROM users WHERE token = $1));';
   var params = [token];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -103,24 +105,24 @@ var groupListing = function(token) {
 
 var groupMembers = function(groupId) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1'
+  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1';
   var params = [group_Id];
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
-    var groupId = (result && result.rows) ? result.rows : null;
+    var group = (result && result.rows) ? result.rows : null;
     callback(null, group);
   });
 };
 
-var groupMembersWaypoints = function(groupMembers) {
+var pendingGroupMembers = function(groupId) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1'
+  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_pending WHERE group_id = $1';
   var params = [group_Id];
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
-    var groupId = (result && result.rows) ? result.rows : null;
+    var group = (result && result.rows) ? result.rows : null;
     callback(null, group);
   });
 };

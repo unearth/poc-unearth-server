@@ -34,11 +34,17 @@ passport.use( 'signup', new LocalStrategy({
         return done(null, true);
       }
 
-      dbHelpers.addUser(email, authUtils.hash(password), function(error, user) {
+      dbHelpers.addUser(email, request.body.name, authUtils.hash(password), function(error, user) {
+        // Sends an error if the database request fails
+        if (error) {
+          request.unearth.error = 'The request has failed!';
+          return done(null, true);
+        }
         if(user){console.log('user: ', user.email);}
         // Creates token, saves it to the database, and sends it to the user
         var token = user.email + Date.now();
         var encryptedToken = authUtils.encodeToken(token);
+
         dbHelpers.addToken(token, user.user_id, function(error, success) {
           if (error) {
             request.unearth.error = 'Database call failed!';
