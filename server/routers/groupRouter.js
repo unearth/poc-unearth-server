@@ -45,7 +45,7 @@ module.exports = function(app, authController) {
   // Denies a group invite, removes invited user from pending invites table
   app.post('/deny', authController.tokenAuth, function(request, response) {
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { response.status(500).json({error: error}); }
+      if (error) { return response.status(500).json({error: error}); }
       if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
 
       dbHelpers.deleteInvite(user.user_id, request.body.groupID, function(error) {
