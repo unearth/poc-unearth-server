@@ -10,9 +10,8 @@ var addUser = function(email, name, password, callback) {
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { dbUtils.handleError(error, callback); }
-    console.log(result);
-
     var user = (result && result.rows) ? result.rows[0] : null;
+    console.log(user);
     callback(null, user);
   });
 };
@@ -261,5 +260,12 @@ module.exports = {
   deleteToken: deleteToken,
   addWaypoints: addUniqueWaypoints,
   getWaypoints: getWaypoints,
-  clearTables: clearTables
+  clearTables: clearTables,
+  inviteUserToGroup: inviteUserToGroup,
+  deleteInvite: deleteInvite,
+  addToGroup: addToGroup,
+  createGroup: createGroup,
+  groupListing: groupListing,
+  groupMembers: groupMembers,
+  pendingGroupMembers: pendingGroupMembers
 };
