@@ -13,9 +13,10 @@ describe('Database ', function() {
 
   it('should add a user to the database and return its user ID', function(done) {
 
-    dbHelpers.addUser(test.users[0].email, test.users[0].password, function(error, user) {
+    dbHelpers.addUser(test.users[0].email, test.users[0].name, test.users[0].password, function(error, user) {
       expect(user.user_id).to.be.a('number');
       expect(user.email).to.equal(test.users[0].email);
+      expect(user.name).to.equal(test.users[0].name);
       expect(user.password).to.equal(test.users[0].password);
       done();
     });
@@ -38,7 +39,7 @@ describe('Database - Waypoints', function() {
     var user = test.users[1];
     var testPoints = test.waypoints;
 
-    dbHelpers.addUser(user.email, user.password, function(error, user) {
+    dbHelpers.addUser(user.email, user.name, user.password, function(error, user) {
       if (error) { throw error; }
 
       dbHelpers.addWaypoints(user.user_id, testPoints.waypoints, function(error) {

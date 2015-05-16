@@ -7,22 +7,14 @@ module.exports = function(app, authController) {
   app.get('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanitize. Expect starting waypoint id default to 0
-
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) {
-        response.status(500).json({error: error});
-        return;
-      }
+      if (error) { return response.status(500).json({error: error}); }
       if (!user) {
-        response.status(409).json({error: 'This isn\'t an existing user!' });
-        return;
+        return response.status(409).json({error: 'This isn\'t an existing user!' });
       }
 
       dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
-        if (error) {
-          response.status(500).json({error: error});
-          return;
-        }
+        if (error) { return response.status(500).json({error: error}); }
         response.status(200).json({waypoints: waypoints});
       });
     });
@@ -33,24 +25,15 @@ module.exports = function(app, authController) {
   app.post('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanititze, Expect {waypoints:[]}
-
     dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) {
-        response.status(500).json({error: error});
-        return;
-      }
+      if (error) { return response.status(500).json({error: error});}
       if(!request.body.waypoints || request.body.waypoints.length < 1 ) {
-        response.status(409).json({error: 'There are no waypoints!'});
-        return;
+        return response.status(409).json({error: 'There are no waypoints!'});
       }
       dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
-        if (error) {
-          response.status(500).json({error: error});
-          return;
-        }
+        if (error) { return response.status(500).json({error: error}); }
         if (!user) {
-          response.status(409).json({error: 'This isn\'t an existing user!'});
-          return;
+          return response.status(409).json({error: 'This isn\'t an existing user!'});
         }
         response.status(200).json({success: 'Waypoints have been posted!'});
       });
