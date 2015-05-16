@@ -34,6 +34,12 @@ passport.use( 'signup', new LocalStrategy({
         return done(null, true);
       }
 
+      // Sends an error if the user already exists
+      if(!request.body.name){
+        request.unearth.error = 'There is no username!';
+        return done(null, true);
+      }
+
       dbHelpers.addUser(email, request.body.name, authUtils.hash(password), function(error, user) {
         // Sends an error if the database request fails
         if (error) {
