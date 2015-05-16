@@ -49,7 +49,7 @@ module.exports = function(app, authController) {
       if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
 
       dbHelpers.deleteInvite(user.user_id, request.body.groupID, function(error) {
-        if (error) { response.status(500).json({error: error}); }
+        if (error) { return response.status(500).json({error: error}); }
         response.status(200).json({success: 'Group request has been declined!'});
       });
     });
