@@ -6,12 +6,11 @@
 -- ---
 
 DROP TABLE IF EXISTS "waypoints";
-DROP TABLE IF EXISTS "local_auth";
 DROP TABLE IF EXISTS "facebook_auth";
 DROP TABLE IF EXISTS "twitter_auth";
 DROP TABLE IF EXISTS "google_auth";
 DROP TABLE IF EXISTS "users";
-DROP TABLE IF EXISTS "group";
+DROP TABLE IF EXISTS "groups";
 DROP TABLE IF EXISTS "group_join";
 DROP TABLE IF EXISTS "group_pending";
 
@@ -22,6 +21,7 @@ DROP TABLE IF EXISTS "group_pending";
 CREATE TABLE users (
   "user_id" SERIAL,
   "email" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
   "password" TEXT NOT NULL,
   "token" TEXT,
   PRIMARY KEY ("user_id")
@@ -43,27 +43,27 @@ CREATE TABLE waypoints (
 -- Group Tables
 -- ---
 
-CREATE TABLE group (
+CREATE TABLE groups (
   "group_id" SERIAL,
   "name" TEXT NOT NULL,
-  "info" TEXT NOT NULL,
+  "description" TEXT NOT NULL,
   PRIMARY KEY ("group_id")
 );
 
 CREATE TABLE group_join (
   "group_id" INTEGER NOT NULL,
   "user_id" INTEGER NOT NULL,
-  FOREIGN KEY ("group_id") REFERENCES group ("user_id") ON DELETE CASCADE,
-  FOREIGN KEY ("user_id") REFERENCES users ("user_id") ON DELETE CASCADE
+  FOREIGN KEY ("group_id") REFERENCES groups ("group_id"),
+  FOREIGN KEY ("user_id") REFERENCES users ("user_id")
 );
 
 CREATE TABLE group_pending (
   "group_id" INTEGER NOT NULL,
   "sender_id" INTEGER NOT NULL,
   "receiver_id" INTEGER NOT NULL,
-  FOREIGN KEY ("group_id") REFERENCES group ("user_id") ON DELETE CASCADE,
-  FOREIGN KEY ("sender_id") REFERENCES users ("user_id") ON DELETE CASCADE,
-  FOREIGN KEY ("receiver_id") REFERENCES users ("user_id") ON DELETE CASCADE
+  FOREIGN KEY ("group_id") REFERENCES groups ("group_id"),
+  FOREIGN KEY ("sender_id") REFERENCES users ("user_id"),
+  FOREIGN KEY ("receiver_id") REFERENCES users ("user_id")
 );
 
 -- ---

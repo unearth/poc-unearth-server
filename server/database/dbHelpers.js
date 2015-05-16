@@ -5,7 +5,7 @@ var dbUtils = require('./dbUtils');
 
 var addUser = function(email, password, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'INSERT into users (email, password) VALUES ($1, $2) RETURNING *;';
+  var query = 'INSERT into users (email, name, password) VALUES ($1, $2) RETURNING *;';
   var params = [email, password];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -39,6 +39,106 @@ var deleteUser = function(userId, callback) {
     callback(null, user);
   });
 };
+
+////////////////////////
+// GROUP ROUTES
+
+var inviteUserToGroup = function(groupId, senderId, receiverId, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'INSERT INTO group_pending (group_id, sender_id, receiver_id) VALUES ($1, $2, $3);'
+  var params = [groupId, senderId, receiverId]
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    callback(null, result);
+  });
+};
+
+var deleteInvite = function(userId, groupId, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'DELETE FROM group_pending WHERE receiver_id = $1 AND group_id $2;'
+  var params = [userId, groupId];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    callback(null, result);
+  });
+};
+
+var addToGroup = function(userId, groupId, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'INSERT INTO group_join (user_id, group_id) VALUES ($1, $2) RETURNING $2;'
+  var params = [userId, groupId];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    var groupId = (result && result.rows[0]) ? result.rows[0] : null;
+    callback(null, groupId);
+  });
+};
+
+var createGroup = function(groupName, groupDescription, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'INSERT INTO groups (name, description) VALUES ($1, $2) RETURNING group_id;'
+  var params = [groupName, groupDescription];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    var groupId = (result && result.rows[0]) ? result.rows[0] : null;
+    callback(null, groupId);
+  });
+};
+
+var groupListing = function(token) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT * FROM groups WHERE group_id = (SELECT group_id FROM group_join WHERE group_id = (SELECT user_id FROM users WHERE token = $1));'
+  var params = [token];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    var groupId = (result && result.rows) ? result.rows : null;
+    callback(null, group);
+  });
+};
+
+var groupMembers = function(groupId) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1'
+  var params = [group_Id];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    var groupId = (result && result.rows) ? result.rows : null;
+    callback(null, group);
+  });
+};
+
+var groupMembersWaypoints = function(groupMembers) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1'
+  var params = [group_Id];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { dbUtils.handleError(error, callback); }
+    var groupId = (result && result.rows) ? result.rows : null;
+    callback(null, group);
+  });
+};
+
+// 'SELECT groups.group_id, groups.name, groups.description,
+//  group_join.user_id, group_pending.receiver_id, users.email
+//  FROM groups
+//  INNER JOIN group_join ON groups.group_id = group_join.user_id
+//  INNER JOIN group_pending ON groups._group_id = group_pending.receiver_id
+//  INNER JOIN users ON group_pending.receiver_id = users.user_id
+//  group_join.user_id = user_id'
+
+// POST: invite to group (token, email, GID) - DB: add to group_pending
+// POST: accept group invite (token, GID) - DB: return GID
+// POST: deny group invite (token, GID)
+// POST: create group (token, group name, groupDescription, email) - DB: return GID
+// GET: group (token) // GETS: (GID, group name, group desccrip, UIDs, UIDpending)
+// //  GET: group waypoints..
 
 ////////////////////////
 // TOKEN ROUTES
