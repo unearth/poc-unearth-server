@@ -16,7 +16,25 @@ module.exports.users = [
     password: 'yoloyoloyolo'}
 ];
 
-module.exports.waypoints = ( function() {
+module.exports.groups = [
+  { "name": "Hello World",
+  "description": "This is a description",
+  "emails": ["Melony@gmail.com"] },
+  { "name": "Hello World 2",
+  "description": "This is a descriptionz",
+  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
+  { "name": "Hello World 3",
+  "description": "This is a descriptionzz",
+  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
+  { "name": "Hello World 4",
+  "description": "This is a descriptionzzz",
+  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
+  { "name": "Hello World 5",
+  "description": "This is a descriptionzzzz",
+  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
+];
+
+module.exports.waypoints = function(userId) {
 
   var results = [];
 
@@ -28,6 +46,6 @@ module.exports.waypoints = ( function() {
       ]
     );
   }
-  return {userId: 1, waypoints: results};
-})();
+  return {userId: userId, waypoints: results};
+};
 
