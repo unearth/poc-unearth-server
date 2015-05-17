@@ -37,7 +37,7 @@ describe('Database ', function() {
 describe('Database - Waypoints', function() {
   it('should insert and retreive waypoints to and from the database', function(done) {
     var user = test.users[1];
-    var testPoints = test.waypoints;
+    var testPoints = test.waypoints(1);
 
     dbHelpers.addUser(user.email, user.name, user.password, function(error, user) {
       if (error) { throw error; }
