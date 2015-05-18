@@ -7,7 +7,7 @@ var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
 
-describe('Waypoint Routes', function() {
+describe('Waypoint Router', function() {
 
   var testPoints = test.waypoints(2);
 
