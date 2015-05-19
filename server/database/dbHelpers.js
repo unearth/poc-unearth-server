@@ -9,21 +9,21 @@ var addUser = function(email, name, password, callback) {
   var params = [email, name, password];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var user = (result && result.rows) ? result.rows[0] : null;
-    console.log(user);
     callback(null, user);
   });
 };
 
 // userData === {token, userId, email}
 var getUser = function(userData, dataType, callback) {
+  console.log(userData, dataType);
   callback = callback || function(value) { return value; };
   var query = 'SELECT * FROM users WHERE ' + dataType + ' = $1;';
   var params = [userData];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var user = (result && result.rows[0]) ? result.rows[0] : null;
     callback(null,  user);
   });
@@ -35,7 +35,7 @@ var deleteUser = function(userId, callback) {
   var params = [userId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var user = (result && result.rows) ? result.rows[0] : null;
     callback(null, user);
   });
@@ -50,18 +50,18 @@ var inviteUserToGroup = function(groupId, senderId, receiverId, callback) {
   var params = [groupId, senderId, receiverId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
 
 var deleteInvite = function(userId, groupId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'DELETE FROM group_pending WHERE receiver_id = $1 AND group_id $2;';
+  var query = 'DELETE FROM group_pending WHERE receiver_id = $1 AND group_id = $2;';
   var params = [userId, groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -72,7 +72,7 @@ var addToGroup = function(userId, groupId, callback) {
   var params = [userId, groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var groupId = (result && result.rows[0]) ? result.rows[0] : null;
     callback(null, groupId);
   });
@@ -84,45 +84,69 @@ var createGroup = function(groupName, groupDescription, callback) {
   var params = [groupName, groupDescription];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var groupId = (result && result.rows[0]) ? result.rows[0] : null;
     callback(null, groupId);
   });
 };
 
-var groupListing = function(token) {
+var groupListing = function(token, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT * FROM groups WHERE group_id = (SELECT group_id FROM group_join WHERE group_id = (SELECT user_id FROM users WHERE token = $1));';
+  var query = 'SELECT group_id FROM group_join WHERE user_id = (SELECT user_id FROM users WHERE token = $1);';
   var params = [token];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
-    var groupId = (result && result.rows) ? result.rows : null;
-    callback(null, group);
-  });
-};
-
-var groupMembers = function(groupId) {
-  callback = callback || function(value) { return value; };
-  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_join WHERE group_id = $1';
-  var params = [group_Id];
-
-  dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var group = (result && result.rows) ? result.rows : null;
     callback(null, group);
   });
 };
 
-var pendingGroupMembers = function(groupId) {
+var groupMembers = function(groupId, i, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_pending WHERE group_id = $1';
-  var params = [group_Id];
+  var query = 'SELECT user_id FROM group_join WHERE group_id = $1';
+  var params = [groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     var group = (result && result.rows) ? result.rows : null;
-    callback(null, group);
+    callback(null, group, groupId, i);
+  });
+};
+
+var pendingGroupMembers = function(groupId, i, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_pending WHERE group_id = $1)';
+  var params = [groupId];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { return dbUtils.handleError(error, callback); }
+    var pendingGroup = (result && result.rows) ? result.rows : null;
+    callback(null, pendingGroup, groupId, i);
+  });
+};
+
+var outstandingInvites = function(token, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT group_id, sender_id FROM group_pending WHERE receiver_id = (SELECT user_id FROM users WHERE token = $1);';
+  var params = [token];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { return dbUtils.handleError(error, callback); }
+    var pendingInvites = (result && result.rows) ? result.rows : null;
+    callback(null, pendingInvites);
+  });
+};
+
+var groupInformation  = function(groupId, j, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT name, description FROM groups WHERE group_id = $1';
+  var params = [groupId];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { return dbUtils.handleError(error, callback); }
+    var group = (result && result.rows) ? result.rows : null;
+    callback(null, group, groupId, j);
   });
 };
 
@@ -150,7 +174,7 @@ var addToken = function(token, userId, callback) {
   var params = [token, userId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -161,7 +185,7 @@ var deleteToken = function(token, callback) {
   var params = [null, token];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -188,7 +212,7 @@ var addAllWaypoints = function(userId, waypoints, callback) {
   }
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -227,7 +251,7 @@ var getWaypoints = function(userId, callback) {
   var params = [userId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
 
     // Convert the database format into the format used in the frontend
     for ( var i = 0; i < result.rows.length; i++ ) {
@@ -246,7 +270,7 @@ var clearTables = function(callback) {
   var query = 'TRUNCATE users RESTART IDENTITY CASCADE;';
 
   dbUtils.makeQuery(query, [], function(error, result) {
-    if (error) { dbUtils.handleError(error, callback); }
+    if (error) { return dbUtils.handleError(error, callback); }
     callback(null, result);
   });
 };
@@ -267,5 +291,7 @@ module.exports = {
   createGroup: createGroup,
   groupListing: groupListing,
   groupMembers: groupMembers,
-  pendingGroupMembers: pendingGroupMembers
+  pendingGroupMembers: pendingGroupMembers,
+  outstandingInvites: outstandingInvites,
+  groupInformation: groupInformation
 };
