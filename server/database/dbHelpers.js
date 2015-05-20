@@ -17,7 +17,6 @@ var addUser = function(email, name, password, callback) {
 
 // userData === {token, userId, email}
 var getUser = function(userData, dataType, callback) {
-  console.log(userData, dataType);
   callback = callback || function(value) { return value; };
   var query = 'SELECT * FROM users WHERE ' + dataType + ' = $1;';
   var params = [userData];
@@ -116,7 +115,7 @@ var groupMembers = function(groupId, i, callback) {
 
 var pendingGroupMembers = function(groupId, i, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT user_id, name, email FROM users WHERE user_id = (SELECT user_id FROM group_pending WHERE group_id = $1)';
+  var query = 'SELECT receiver_id FROM group_pending WHERE group_id = $1';
   var params = [groupId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -147,6 +146,32 @@ var groupInformation  = function(groupId, j, callback) {
     if (error) { return dbUtils.handleError(error, callback); }
     var group = (result && result.rows) ? result.rows : null;
     callback(null, group, groupId, j);
+  });
+};
+
+// userData === {token, userId, email}
+var memberUser = function(user_id, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT user_id, email, name FROM users WHERE user_id = $1;';
+  var params = [user_id];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { return dbUtils.handleError(error, callback); }
+    var user = (result && result.rows[0]) ? result.rows[0] : null;
+    callback(null,  user);
+  });
+};
+
+// userData === {token, userId, email}
+var pendingUser = function(userData, dataType, callback) {
+  callback = callback || function(value) { return value; };
+  var query = 'SELECT user_id, email, name FROM users WHERE user_id = $1;';
+  var params = [user_id];
+
+  dbUtils.makeQuery(query, params, function(error, result) {
+    if (error) { return dbUtils.handleError(error, callback); }
+    var user = (result && result.rows[0]) ? result.rows[0] : null;
+    callback(null,  user);
   });
 };
 
@@ -247,7 +272,7 @@ var addUniqueWaypoints = function(userId, waypoints, callback) {
 
 var getWaypoints = function(userId, callback) {
   callback = callback || function(value) { return value; };
-  var query = 'SELECT location FROM waypoints WHERE user_id = $1;';
+  var query = 'SELECT location, user_id FROM waypoints WHERE user_id = $1;';
   var params = [userId];
 
   dbUtils.makeQuery(query, params, function(error, result) {
@@ -293,5 +318,7 @@ module.exports = {
   groupMembers: groupMembers,
   pendingGroupMembers: pendingGroupMembers,
   outstandingInvites: outstandingInvites,
-  groupInformation: groupInformation
+  groupInformation: groupInformation,
+  memberUser: memberUser,
+  pendingUser: pendingUser
 };
