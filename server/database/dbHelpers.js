@@ -270,7 +270,7 @@ var addUniqueWaypoints = function(userId, waypoints, callback) {
   });
 };
 
-var getWaypoints = function(userId, callback) {
+var getWaypoints = function(userId, j, callback) {
   callback = callback || function(value) { return value; };
   var query = 'SELECT location, user_id FROM waypoints WHERE user_id = $1;';
   var params = [userId];
@@ -283,7 +283,7 @@ var getWaypoints = function(userId, callback) {
       result.rows[i] = ([result.rows[i].location.x, result.rows[i].location.y]);
     }
 
-    callback(null, result.rows);
+    callback(null, j, result.rows);
   });
 };
 
