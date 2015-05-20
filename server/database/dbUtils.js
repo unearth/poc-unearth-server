@@ -12,6 +12,7 @@ client.connect( function(error) {
 // Handles any database errors
 module.exports.handleError = function(error, callback) {
   if(error) {
+    console.log(error);
     callback(error);
     return;
   }

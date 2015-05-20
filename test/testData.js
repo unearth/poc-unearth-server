@@ -13,7 +13,10 @@ module.exports.users = [
     password: 'I also have a password'},
   { email: 'Yolo@gmail.com',
     name: 'Yolosw4g',
-    password: 'yoloyoloyolo'}
+    password: 'yoloyoloyolo'},
+  { email: 'Yoliiii@gmail.com',
+    name: 'Yoloswig',
+    password: 'yoliyoliyoli'}
 ];
 
 module.exports.groups = [
@@ -49,3 +52,23 @@ module.exports.waypoints = function(userId) {
   return {userId: userId, waypoints: results};
 };
 
+module.exports.markers = function(userId, groupId, name, description, imageUrl) {
+
+  var results = [];
+
+  for (var i = 1; i <= 3; i++) {
+    results.push(
+      {
+        groupId: groupId,
+        name: name,
+        description: description,
+        imageUrl: imageUrl,
+        location: [
+          Math.round( Math.random()*100000 ) / 100,
+          Math.round( Math.random()*100000 ) / 100
+        ]
+      }
+    );
+  }
+  return {userId: userId, markers: results};
+};

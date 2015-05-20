@@ -120,6 +120,7 @@ passport.use( 'login-token', new BearerStrategy({
 
     dbHelpers.getUser(token, 'token', function(error, user) {
       if(user){console.log('user: ', user.email);}
+
       // The request has failed
       if (error) {return done(error, false);}
 
