@@ -17,7 +17,7 @@ module.exports = function(app, authController) {
         if (!receiver) { return response.status(409).json({error: 'This isn\'t an existing receiver!' }); }
         var receiverId = receiver.user_id;
 
-        dbHelpers.inviteUser(request.body.groupId, senderId, receiverId, function(error) {
+        dbHelpers.inviteUserToGroup(request.body.groupId, senderId, receiverId, function(error) {
           if (error) {return response.status(500).json({error: error}); }
           response.status(200).json({success: 'Group request has been sent!'});
         });
@@ -31,10 +31,11 @@ module.exports = function(app, authController) {
       if (error) { return response.status(500).json({error: error}); }
       if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
       var user_id = user.user_id;
+      console.log(user_id);
 
-      dbHelpers.deleteInvite(user_id, request.body.groupID, function(error) {
+      dbHelpers.deleteInvite(user_id, request.body.groupId, function(error) {
         if (error) { return response.status(500).json({error: error}); }
-        dbHelpers.addToGroup(user_id, request.body.groupID, function(error) {
+        dbHelpers.addToGroup(user_id, request.body.groupId, function(error) {
           if (error) { return response.status(500).json({error: error}); }
           response.status(200).json({success: 'Group request has been accepted!'});
         });
@@ -70,17 +71,19 @@ module.exports = function(app, authController) {
           if (error) { return response.status(500).json({error: error}); }
           if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
 
-          dbHelpers.inviteUserToGroup(groupId, senderId, user.user_id,function(error) {
+          dbHelpers.inviteUserToGroup(groupId, senderId, user.user_id, function(error) {
             if (error) { return response.status(500).json({error: error}); }
-            response.status(200).json({success: 'Group request has been sent!'});
+            console.log('Group request has been sent!');
           });
         };
+
+
 
         for (var i = 0; i < request.body.emails.length; i++) {
           dbHelpers.getUser(request.body.emails[i], 'email', inviteUser);
         }
 
-        dbHelpers.addToGroup(sender_id, group_id, function(error) {
+        dbHelpers.addToGroup(senderId, groupId, function(error) {
           if (error) { return response.status(500).json({error: error}); }
           response.status(200).json({success: 'Group has been created!'});
         });
@@ -89,32 +92,85 @@ module.exports = function(app, authController) {
   });
 
   // Queries database for user's groups
-  app.get('/groups', authController.tokenAuth, function(request, response) {
+  app.get('/', authController.tokenAuth, function(request, response) {
+    var groupsWithMembers = [];
     dbHelpers.groupListing(request.unearth.token, function(error, groups) {
       if (error) { return response.status(500).json({error: error}); }
       if (!groups) { return response.status(409).json({error: 'There are no groups!' });}
 
-      var groupMembers = function(error, members) {
+      var outstandingInvites = [];
+      var j;
+
+      // get outstanding invite groupId and senderId!!!!!!
+
+      dbHelpers.outstandingInvites(request.unearth.token, function(error, invites) {
         if (error) { return response.status(500).json({error: error}); }
-        groups[i].members = members;
-      };
+        if (!invites) { return response.status(409).json({error: 'There are no outstanding invites!' });}
 
-      var memberWaypoints = function(error, waypoints) {
-        if (error) { return response.status(500).json({error: error}); }
-        groups[i].members[j].waypoints = waypoints;
-      };
 
-      // Cycles through groups, gets users for each group, and creates objects for each group
-      for (var i = 0; i < groups.length; i++) {
-        dbHelpers.groupMembers(groups[i].group_id, groupMembers);
-        dbHelpers.pendingGroupMembers(groups[i].group_id, groupMembers);
 
-        for (var j = 0; j < groups[i].members.length; j++) {
-          dbHelpers.getWaypoints(groups[i].members[j].user_id, memberWayponts);
-        }
-      }
-      response.status(200).json({groups: groups});
+        for (var j = 0; j < invites.length; j ++) {
+          console.log('groupid', invites[j].group_id)
+
+          dbHelpers.groupInformation(invites[j].group_id, j, function (error, info, groupId, j) {
+            if (error) { return response.status(500).json({error: error}); }
+            if (!groups) { return response.status(409).json({error: 'There are no groups!' });}
+
+              outstandingInvites.push([invites[j], info]);
+          });
+        };
+
+        // Cycles through groups, gets users for each group
+        for (var i = 0; i < groups.length; i++ ) {
+
+          // TODO: groupMembers db helper has changed: the function below does NOT reflect that change
+          // The Fn below needs to first select all member user_ids, and then get user_info for those IDs
+
+          dbHelpers.groupMembers(groups[i].group_id, i, function(error, members, groupId, i) {
+            if (error) { return response.status(500).json({error: error}); }
+            if (!groupMembers) { return response.status(409).json({error: 'There are no group members!' });}
+            console.log(members, i);
+            groups[i].members = members;
+          });
+
+          dbHelpers.pendingGroupMembers(groups[i].group_id, i, function(error, pendingMembers, groupId, i) {
+            if (error) { return response.status(500).json({error: error}); }
+            groups[i].pendingMembers = pendingMembers;
+            if ((i === groups.length -1) && (j === invites.length)) {
+              groups.push({'outstandingInvites': outstandingInvites});
+              console.log(groups);
+              response.status(200).json({groups: groups});
+            }
+          });
+        };
+      });
     });
   });
+
+  app.get('/waypoints', authController.tokenAuth, function(request, response) {
+    var membersGroup = [];
+    var i;
+    dbHelpers.groupMembers(parseInt(request.headers.groupid), null, function(error, members, groupId) {
+      if (error) { return response.status(500).json({error: error}); }
+      if (!members) { return response.status(409).json({error: 'There are no group members!' });}
+
+      for (var i = 0; i < members.length; i++) {
+        dbHelpers.getUser(members[i].user_id, 'user_id', function(error, user) {
+          if (error) { return response.status(500).json({error: error}); }
+          if (!user) { return response.status(409).json({error: 'This isn\'t an existing sender!' }); }
+          var member = [];
+          member.push(user.user_id, user.name, user.email);
+          membersGroup.push(member);
+          console.log(membersGroup);
+        });
+      };
+
+      if (i === members.length) {
+        console.log('members in json', membersGroup);
+        response.status(200).json({members: membersGroup});
+      }
+    });
+  });
+
 };
 
