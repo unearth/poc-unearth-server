@@ -1,7 +1,5 @@
 var dbHelpers = require('../database/dbHelpers.js');
 
-
-
 module.exports = function(app, authController) {
 
   // Invites a user to a group (using a groupID and the invited person's email)
@@ -85,9 +83,9 @@ module.exports = function(app, authController) {
           dbHelpers.getUser(request.body.emails[i], 'email', inviteUser);
         }
 
-        dbHelpers.addToGroup(senderId, groupId, function(error) {
+        dbHelpers.addToGroup(senderId, groupId, function(error, groupId) {
           if (error) { return response.status(500).json({error: error}); }
-          response.status(200).json({success: 'Group has been created!'});
+          response.status(200).json({groupId: groupId});
         });
       });
     });
