@@ -13,28 +13,25 @@ module.exports.users = [
     password: 'I also have a password'},
   { email: 'Yolo@gmail.com',
     name: 'Yolosw4g',
-    password: 'yoloyoloyolo'},
-  { email: 'Yoliiii@gmail.com',
-    name: 'Yoloswig',
-    password: 'yoliyoliyoli'}
+    password: 'yoloyoloyolo'}
 ];
 
 module.exports.groups = [
-  { "name": "Hello World",
-  "description": "This is a description",
-  "emails": ["Melony@gmail.com"] },
-  { "name": "Hello World 2",
-  "description": "This is a descriptionz",
-  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
-  { "name": "Hello World 3",
-  "description": "This is a descriptionzz",
-  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
-  { "name": "Hello World 4",
-  "description": "This is a descriptionzzz",
-  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
-  { "name": "Hello World 5",
-  "description": "This is a descriptionzzzz",
-  "emails": ["Melony@gmail.com, Joe@gmail.com"] },
+  { "groupName": "Hello World",
+  "groupDescription": "This is a groupDescription",
+  "emails": ["Brian@gmail.com"] },
+  { "groupName": "Hello World 2",
+  "groupDescription": "This is a groupDescriptionz",
+  "emails": ["Brian@gmail.com, Joe@gmail.com"] },
+  { "groupName": "Hello World 3",
+  "groupDescription": "This is a groupDescriptionzz",
+  "emails": ["Brian@gmail.com, Joe@gmail.com"] },
+  { "groupName": "Hello World 4",
+  "groupDescription": "This is a groupDescriptionzzz",
+  "emails": ["Brian@gmail.com, Joe@gmail.com"] },
+  { "groupName": "Hello World 5",
+  "groupDescription": "This is a descriptionzzzz",
+  "emails": ["Brian@gmail.com, Joe@gmail.com"] },
 ];
 
 module.exports.waypoints = function(userId) {
@@ -52,23 +49,3 @@ module.exports.waypoints = function(userId) {
   return {userId: userId, waypoints: results};
 };
 
-module.exports.markers = function(userId, groupId, name, description, imageUrl) {
-
-  var results = [];
-
-  for (var i = 1; i <= 3; i++) {
-    results.push(
-      {
-        groupId: groupId,
-        name: name,
-        description: description,
-        imageUrl: imageUrl,
-        location: [
-          Math.round( Math.random()*100000 ) / 100,
-          Math.round( Math.random()*100000 ) / 100
-        ]
-      }
-    );
-  }
-  return {userId: userId, markers: results};
-};

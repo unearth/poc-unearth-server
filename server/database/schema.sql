@@ -69,22 +69,6 @@ CREATE TABLE group_pending (
   FOREIGN KEY ("receiver_id") REFERENCES users ("user_id")
 );
 
-
--- ---
--- Marker Tables
--- ---
-CREATE TABLE markers (
-  "group_id" INTEGER NOT NULL,
-  "user_id" INTEGER NOT NULL,
-  "location" POINT NOT NULL,
-  "description" TEXT NOT NULL,
-  "image_url" TEXT NOT NULL,
-  "name" TEXT NOT NULL,
-  FOREIGN KEY ("group_id") REFERENCES groups ("group_id"),
-  FOREIGN KEY ("user_id") REFERENCES users ("user_id")
-);
-
-
 -- ---
 -- Auth Tables
 -- ---
