@@ -231,7 +231,7 @@ module.exports = function(app, authController) {
           })(i);
         }
       } else {
-        response.status(200).json({waypoints: membersGroup});
+        response.status(200).json({waypoints: members});
       }
     });
   });

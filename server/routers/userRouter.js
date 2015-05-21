@@ -1,4 +1,4 @@
-var dbHelpers = require('../database/dbHelpers.js');
+var userHelpers = require('../database/dbUserHelpers.js');
 
 module.exports = function(app, authController) {
 
@@ -22,7 +22,7 @@ module.exports = function(app, authController) {
   app.post('/logout', function(request, response) {
     var token = request.headers.authorization.split(' ')[1];
 
-    dbHelpers.deleteToken(token, function(error, user) {
+    userHelpers.deleteToken(token, function(error, user) {
       if (error) { return response.status(500).json({error: error}); }
       response.status(200).json({success: 'Session has been removed!'});
     });
