@@ -1,4 +1,5 @@
-var dbHelpers = require('../database/dbHelpers.js');
+var userHelpers = require('../database/dbUserHelpers.js');
+var waypointsHelpers = require('../database/dbWaypointsHelpers.js');
 
 module.exports = function(app, authController) {
 
@@ -7,7 +8,7 @@ module.exports = function(app, authController) {
   app.get('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanitize. Expect starting waypoint id default to 0
-    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) { return response.status(500).json({error: error}); }
       if (!user) {
         return response.status(409).json({error: 'This isn\'t an existing user!' });
@@ -15,7 +16,7 @@ module.exports = function(app, authController) {
 
 // ADDED NULL HERE TO ACCT FOR GROUP GET WAYPOINTS
 
-      dbHelpers.getWaypoints(user.user_id, user, function(error, user, waypoints) {
+      waypointsHelpers.getWaypoints(user.user_id, function(error, user, waypoints) {
         if (error) { return response.status(500).json({error: error}); }
         response.status(200).json({waypoints: waypoints});
       });
@@ -27,12 +28,12 @@ module.exports = function(app, authController) {
   app.post('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanititze, Expect {waypoints:[]}
-    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) { return response.status(500).json({error: error});}
       if(!request.body.waypoints || request.body.waypoints.length < 1 ) {
         return response.status(409).json({error: 'There are no waypoints!'});
       }
-      dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
+      waypointsHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
         if (error) { return response.status(500).json({error: error}); }
         if (!user) {
           return response.status(409).json({error: 'This isn\'t an existing user!'});
