@@ -1,4 +1,3 @@
-var dbHelpers = require('../database/dbHelpers.js');
 var userHelpers = require('../database/dbUserHelpers.js');
 
 module.exports = function(app, authController) {
