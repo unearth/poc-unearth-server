@@ -14,9 +14,7 @@ module.exports = function(app, authController) {
         return response.status(409).json({error: 'This isn\'t an existing user!' });
       }
 
-// ADDED NULL HERE TO ACCT FOR GROUP GET WAYPOINTS
-
-      waypointsHelpers.getWaypoints(user.user_id, function(error, user, waypoints) {
+      waypointsHelpers.getWaypoints(user.user_id, function(error, waypoints) {
         if (error) { return response.status(500).json({error: error}); }
         response.status(200).json({waypoints: waypoints});
       });
