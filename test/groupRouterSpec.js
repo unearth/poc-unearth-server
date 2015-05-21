@@ -11,7 +11,7 @@ describe('Group Router', function() {
 
   var testPoints = test.waypoints(3);
 
-  xit('should make a group', function(done) {
+  it('should make a group', function(done) {
 
     // Signs up
     request(app)
@@ -39,6 +39,7 @@ describe('Group Router', function() {
               .set('Authorization', 'Bearer ' + response.body.token)
               .end( function(error, response) {
                 if (error) { throw error; }
+                console.log(response);
                 expect(response.statusCode).to.equal(200);
                 done();
               });
@@ -46,12 +47,12 @@ describe('Group Router', function() {
       });
   });
 
-  xit('should invite users to a group', function(done) {
+  it('should invite users to a group', function(done) {
 
     // Logs in
     request(app)
-      .post('/login')
-      .send(test.users[3])
+      .post('/signup')
+      .send(test.users[1])
       .set('Accept', 'application/json')
       .end( function(error, response) {
         if (error) { throw error; }
@@ -69,13 +70,25 @@ describe('Group Router', function() {
 
             // Sends an invite
             request(app)
-              .post('/group/invite')
-              .send(test.groups[0])
+              .get('/group')
               .set('Authorization', 'Bearer ' + response.body.token)
               .end( function(error, response) {
                 if (error) { throw error; }
                 expect(response.statusCode).to.equal(200);
-                done();
+                console.log(response);
+                // Sends an invite
+                request(app)
+                  .post('/group/invite')
+                  .send({
+                    email: "Melony@gmail.com",
+                    groupId: 1
+                  })
+                  .set('Authorization', 'Bearer ' + response.body.token)
+                  .end( function(error, response) {
+                    if (error) { throw error; }
+                    expect(response.statusCode).to.equal(200);
+                    done();
+                  });
               });
           });
       });

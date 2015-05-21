@@ -93,6 +93,7 @@ passport.use( 'login-local', new LocalStrategy({
       // Creates token, saves it to the database, and sends it to the user
       var token = user.email + Date.now();
       var encryptedToken = authUtils.encodeToken(token);
+
       dbHelpers.addToken(token, user.user_id, function(error, result) {
         if(error){throw error;}
         request.unearth.token = encryptedToken;

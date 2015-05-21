@@ -137,7 +137,7 @@ var outstandingInvites = function(token, callback) {
   });
 };
 
-var groupInformation  = function(groupId, j, callback) {
+var groupInformation  = function(groupId, callback) {
   callback = callback || function(value) { return value; };
   var query = 'SELECT name, description FROM groups WHERE group_id = $1';
   var params = [groupId];
@@ -145,7 +145,7 @@ var groupInformation  = function(groupId, j, callback) {
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
     var group = (result && result.rows) ? result.rows : null;
-    callback(null, group, groupId, j);
+    callback(null, group);
   });
 };
 
