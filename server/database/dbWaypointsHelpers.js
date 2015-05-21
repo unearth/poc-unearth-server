@@ -63,7 +63,7 @@ var getWaypoints = function(userId, callback) {
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
 
-    // Convert the database format into the format used in the frontend
+    // Converts the database format into the format used in the frontend
     for ( var i = 0; i < result.rows.length; i++ ) {
       result.rows[i] = ([result.rows[i].location.x, result.rows[i].location.y]);
     }
