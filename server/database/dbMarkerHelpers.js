@@ -12,6 +12,16 @@ var addMarkers = function(userId, markers, callback) {
   // Loops through the markers array and adds them to the query string
   for (var i = 0; i < markers.length; i++) {
 
+    // Reject if a required item is undefined
+    if( (markers[i].name === undefined) ||
+        (markers[i].location === undefined) ||
+        (markers[i].groupId  === undefined) ||
+        (markers[i].imageUrl === undefined) ||
+        (markers[i].description === undefined) ){
+      callback(error, null);
+      return;
+    }
+
     // Prepares the query string and params array for a mass single insert
     // markers[i] === [latitude, longitude]
     params.push(
@@ -43,7 +53,7 @@ var getMarkers = function(userId, callback) {
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
-    console.log('---------------rows:', result);
+    console.log('---------------rows:', result.rows);
     // Convert the database format into the format used in the frontend
     result.rows = result.rows || [];
     for ( var i = 0; i < result.rows.length; i++ ) {

@@ -1,13 +1,13 @@
-var dbHelpers = require('../database/dbHelpers.js');
-var markerHelpers = require('../database/markerHelpers.js');
+var userHelpers = require('../database/dbUserHelpers.js');
+var markerHelpers = require('../database/dbMarkerHelpers.js');
 var cloudAPI = require('../config.js');
 var cloudinary = require('cloudinary');
 var multiparty = require('multiparty');
 var fs = require('fs');
 
 cloudinary.config({
-  cloud_name: cloudAPI.cloudinary.cloudName,
   api_key: cloudAPI.cloudinary.apiKey,
+  cloud_name: cloudAPI.cloudinary.cloudName,
   api_secret: cloudAPI.cloudinary.apiSecret
 });
 
@@ -18,7 +18,7 @@ module.exports = function(app, authController) {
   app.get('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanitize. Expect starting waypoint id default to 0
-    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) { return response.status(500).json({error: error}); }
       if (!user) {
         return response.status(409).json({error: 'This isn\'t an existing user!' });
@@ -36,7 +36,7 @@ module.exports = function(app, authController) {
   app.post('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanititze, Expect {markers:[]}
-    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) { return response.status(500).json({error: error});}
       if(!request.body.markers || request.body.markers.length < 1 ) {
         return response.status(409).json({error: 'There are no markers!'});
@@ -52,14 +52,14 @@ module.exports = function(app, authController) {
     });
   });
 
+  // Uploads an image to cloudinary
   app.post('/imageUpload', function(req, res) {
 
     var form = new multiparty.Form();
-
     var resizeImageURL = function(url, width) {
       var urlPieces = url.split('upload/');
       return urlPieces[0] + 'upload/w_'+width+'/' + urlPieces[1];
-    }
+    };
 
     var stream =  cloudinary.uploader.upload_stream(function(result) {
       // Get the image_url for a 170px wide image
