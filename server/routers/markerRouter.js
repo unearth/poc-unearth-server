@@ -1,13 +1,13 @@
-var dbHelpers = require('../database/dbHelpers.js');
-var markerHelpers = require('../database/markerHelpers.js');
+var userHelpers = require('../database/dbUserHelpers.js');
+var markerHelpers = require('../database/dbMarkerHelpers.js');
 var cloudAPI = require('../config.js');
 var cloudinary = require('cloudinary');
 var multiparty = require('multiparty');
 var fs = require('fs');
 
 cloudinary.config({
-  cloud_name: cloudAPI.cloudinary.cloudName,
   api_key: cloudAPI.cloudinary.apiKey,
+  cloud_name: cloudAPI.cloudinary.cloudName,
   api_secret: cloudAPI.cloudinary.apiSecret
 });
 
@@ -52,10 +52,10 @@ module.exports = function(app, authController) {
     });
   });
 
+  // Uploads an image to cloudinary
   app.post('/imageUpload', function(req, res) {
 
     var form = new multiparty.Form();
-
     var resizeImageURL = function(url, width) {
       var urlPieces = url.split('upload/');
       return urlPieces[0] + 'upload/w_'+width+'/' + urlPieces[1];
