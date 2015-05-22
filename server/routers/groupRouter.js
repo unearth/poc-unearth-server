@@ -13,19 +13,19 @@ module.exports = function(app, authController) {
 
     // Gets sender data
     userHelpers.getUser(request.unearth.token, 'token', function(error, sender) {
-      if (error) { return response.status(500).json({error: error}); }
-      if (!sender) { return response.status(409).json({error: 'This isn\'t an existing sender!' }); }
+      if (error) { return response.status(500).json({error: 'Sender could not be located.'}); }
+      if (!sender) { return response.status(409).json({error: 'Sender doesn\'t exist.' }); }
       var senderId = sender.user_id;
 
       // Gets receiver data
       userHelpers.getUser(request.body.email, 'email', function(error, receiver) {
-        if (error) { return response.status(500).json({error: error}); }
-        if (!receiver) { return response.status(409).json({error: 'This isn\'t an existing receiver!' }); }
+        if (error) { return response.status(500).json({error: 'Receiver could not be located.'}); }
+        if (!receiver) { return response.status(409).json({error: 'Receiver doesn\'t exist.' }); }
         var receiverId = receiver.user_id;
 
         // Invites a user to a group
         dbHelpers.inviteUserToGroup(request.body.groupId, senderId, receiverId, function(error) {
-          if (error) {return response.status(500).json({error: error}); }
+          if (error) {return response.status(500).json({error: 'User could not be invited.'}); }
           response.status(200).json({success: 'Group request has been sent!'});
         });
       });
@@ -35,15 +35,14 @@ module.exports = function(app, authController) {
   // Accepts an invite, adds user to group, and removes user from pending invites
   app.post('/accept', authController.tokenAuth, function(request, response) {
     userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error}); }
-      if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
-      var user_id = user.user_id;
-      console.log(user_id);
+      if (error) { return response.status(500).json({error: 'User could not be located.'}); }
+      if (!user) { return response.status(409).json({error: 'User doesn\'t exist.' }); }
 
-      dbHelpers.deleteInvite(user_id, request.body.groupId, function(error) {
-        if (error) { return response.status(500).json({error: error}); }
-        dbHelpers.addToGroup(user_id, request.body.groupId, function(error) {
-          if (error) { return response.status(500).json({error: error}); }
+      dbHelpers.deleteInvite(user.user_id, request.body.groupId, function(error) {
+        if (error) { return response.status(500).json({error: '1: Invitation could not be accepted.'}); }
+
+        dbHelpers.addToGroup(user.user_id, request.body.groupId, function(error) {
+          if (error) { return response.status(500).json({error: '2: Invitation could not be accepted.'}); }
           response.status(200).json({success: 'Group request has been accepted!'});
         });
       });
@@ -53,11 +52,11 @@ module.exports = function(app, authController) {
   // Denies a group invite, removes invited user from pending invites table
   app.post('/deny', authController.tokenAuth, function(request, response) {
     userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error}); }
-      if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
+      if (error) { return response.status(500).json({error: 'User could not be located.'}); }
+      if (!user) { return response.status(409).json({error: 'User doesn\'t exist.' }); }
 
-      dbHelpers.deleteInvite(user.user_id, request.body.groupID, function(error) {
-        if (error) { return response.status(500).json({error: error}); }
+      dbHelpers.deleteInvite(user.user_id, request.body.groupId, function(error) {
+        if (error) { return response.status(500).json({error: '1: Invitation could not be declined.' }); }
         response.status(200).json({success: 'Group request has been declined!'});
       });
     });
@@ -70,8 +69,8 @@ module.exports = function(app, authController) {
 
     // Gets outstanding invites' groupId and senderIds
     dbHelpers.outstandingInvites(request.unearth.token, function(error, invites) {
-      if (error) { return response.status(500).json({error: error}); }
-      if (!invites ) { return response.status(410).json({error: 'There are no outstanding invites!' });}
+      if (error) { return response.status(500).json({error: 'Outstanding invites could not be located'}); }
+      if (!invites ) { return response.status(410).json({error: 'There are no existing outstanding invites.' });}
 
       // If there are invites, loops through each and returns the group name/description for each
       if (invites.length > 0) {
@@ -79,7 +78,7 @@ module.exports = function(app, authController) {
 
           (function(i){
             dbHelpers.groupInformation(invites[i].group_id, function (error, info, groupId) {
-              if (error) { return response.status(500).json({error: error}); }
+              if (error) { return response.status(500).json({error: 'Group could not be located'}); }
               if (!info) { return response.status(500).json({error: 'There are no groups!' });}
 
               outstandingInvites.push([invites[i], info]);
@@ -104,22 +103,22 @@ module.exports = function(app, authController) {
   // Creates a group and stores it to the database
   app.post('/create', authController.tokenAuth, function(request, response) {
     userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error}); }
-      if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
+      if (error) { return response.status(500).json({error: 'User could not be located.'}); }
+      if (!user) { return response.status(409).json({error: 'User doesn\'t exist.' }); }
       var senderId = user.user_id;
 
       // Creates a group
       dbHelpers.createGroup(request.body.groupName, request.body.groupDescription,  function(error, group) {
-        if (error) { return response.status(500).json({error: error}); }
+        if (error) { return response.status(500).json({error: 'Group could not be created.'}); }
         var groupId = group.group_id;
 
         // Invites a user to the group
         var inviteUser = function(error, user) {
-          if (error) { return response.status(500).json({error: error}); }
-          if (!user) { return response.status(409).json({error: 'This isn\'t an existing user!' }); }
+          if (error) { return response.status(500).json({error: 'User could not be located.'}); }
+          if (!user) { return response.status(409).json({error: 'User doesn\'t exist.' }); }
 
           dbHelpers.inviteUserToGroup(groupId, senderId, user.user_id, function(error) {
-            if (error) { return response.status(500).json({error: error}); }
+            if (error) { return response.status(500).json({error: 'User could not be invited.'}); }
           });
         };
 
@@ -128,7 +127,7 @@ module.exports = function(app, authController) {
         }
 
         dbHelpers.addToGroup(senderId, groupId, function(error, groupId) {
-          if (error) { return response.status(500).json({error: error}); }
+          if (error) { return response.status(500).json({error: 'User could not be added to group.'}); }
           response.status(200).json({groupId: groupId});
         });
       });
