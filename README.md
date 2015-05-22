@@ -38,7 +38,7 @@ Routes
 #####Response:
 ```
 {
-"token": "YOUR TOKEN HERE"
+  "token": "YOUR TOKEN HERE"
 }
 ```
 
