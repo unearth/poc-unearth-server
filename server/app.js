@@ -35,22 +35,16 @@ app.use(function(request, response, next) {
 // ROUTES
 
 // Initializes routers
-var userRouter = express.Router();
-var groupRouter = express.Router();
-var markerRouter = express.Router();
 var waypointsRouter = express.Router();
+var userRouter = express.Router();
 
 // Declares the router paths
-app.use('/', userRouter);
-app.use('/group', groupRouter);
-app.use('/marker', markerRouter);
 app.use('/waypoints', waypointsRouter);
+app.use('/', userRouter);
 
 // Runs the router functions in order to add them to the path
-require('./routers/userRouter')(userRouter, authController);
-require('./routers/groupRouter')(groupRouter, authController);
-require('./routers/markerRouter')(markerRouter, authController);
 require('./routers/waypointsRouter')(waypointsRouter, authController);
+require('./routers/userRouter')(userRouter, authController);
 
 // Catches unknown routes and throws back a 404 response
 app.use( function(request, response) {
