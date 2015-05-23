@@ -4,7 +4,7 @@ var BearerStrategy = require('passport-http-bearer').Strategy;
 
 var authUtils = require('./authUtils');
 var dbHelpers = require('../database/dbHelpers');
-
+var userHelpers = require('../database/dbUserHelpers');
 
 ////////////////////////
 // SIGN UP STRATEGY
@@ -20,7 +20,7 @@ passport.use( 'signup', new LocalStrategy({
     if (!request.unearth) {request.unearth = {};}
 
     // Finds the user, using their email
-    dbHelpers.getUser(email, 'email', function(error, user) {
+    userHelpers.getUser(email, 'email', function(error, user) {
 
       // Sends an error if the database request fails
       if (error) {
@@ -34,12 +34,24 @@ passport.use( 'signup', new LocalStrategy({
         return done(null, true);
       }
 
-      dbHelpers.addUser(email, authUtils.hash(password), function(error, user) {
+      // Sends an error if the user already exists
+      if(!request.body.name){
+        request.unearth.error = 'There is no username!';
+        return done(null, true);
+      }
+
+      userHelpers.addUser(email, request.body.name, authUtils.hash(password), function(error, user) {
+        // Sends an error if the database request fails
+        if (error) {
+          request.unearth.error = 'The request has failed!';
+          return done(null, true);
+        }
         if(user){console.log('user: ', user.email);}
         // Creates token, saves it to the database, and sends it to the user
         var token = user.email + Date.now();
         var encryptedToken = authUtils.encodeToken(token);
-        dbHelpers.addToken(token, user.user_id, function(error, success) {
+
+        userHelpers.addToken(token, user.user_id, function(error, success) {
           if (error) {
             request.unearth.error = 'Database call failed!';
             return done(null, true);
@@ -66,7 +78,7 @@ passport.use( 'login-local', new LocalStrategy({
     // Creates an unearth response object
     if(!request.unearth){ request.unearth = {}; }
 
-    dbHelpers.getUser(email, 'email', function(error, user) {
+    userHelpers.getUser(email, 'email', function(error, user) {
       if (user) {console.log('user: ', user.email);}
       if (error) {return done(error, false);}
 
@@ -81,7 +93,8 @@ passport.use( 'login-local', new LocalStrategy({
       // Creates token, saves it to the database, and sends it to the user
       var token = user.email + Date.now();
       var encryptedToken = authUtils.encodeToken(token);
-      dbHelpers.addToken(token, user.user_id, function(error, result) {
+
+      userHelpers.addToken(token, user.user_id, function(error, result) {
         if(error){throw error;}
         request.unearth.token = encryptedToken;
         return done(null, true);
@@ -106,7 +119,7 @@ passport.use( 'login-token', new BearerStrategy({
     // Creates an unearth response object
     if(!request.unearth){ request.unearth = {}; }
 
-    dbHelpers.getUser(token, 'token', function(error, user) {
+    userHelpers.getUser(token, 'token', function(error, user) {
       if(user){console.log('user: ', user.email);}
       // The request has failed
       if (error) {return done(error, false);}

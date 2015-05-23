@@ -18,5 +18,11 @@ module.exports = {
     'clientId'      : 'your-secret-clientID-here',
     'clientSecret'  : 'your-client-secret-here',
     'callbackUrl'   : 'http://localhost:8080/auth/google/callback'
+  },
+
+  'cloudinary' : {
+    'cloudName'       : 'your-secret-cloudName-here',
+    'apiKey'          : 'your-client-apiKey-here',
+    'apiSecret'       : 'your-client-secret-here'
   }
 };
