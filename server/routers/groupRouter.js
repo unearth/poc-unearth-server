@@ -111,9 +111,8 @@ module.exports = function(app, authController) {
       var senderId = user.user_id;
 
       // Creates a group
-      dbGroupHelpers.createGroup(request.body.groupName, request.body.groupDescription,  function(error, group) {
+      dbGroupHelpers.createGroup(request.body.groupName, request.body.groupDescription,  function(error, groupId) {
         if (error) { return response.status(500).json({error: 'Group could not be created.'}); }
-        var groupId = group.group_id;
 
         // Invites a user to the group
         var inviteUser = function(error, user) {
@@ -129,7 +128,7 @@ module.exports = function(app, authController) {
           dbUserHelpers.getUser(request.body.emails[i], 'email', inviteUser);
         }
 
-        dbGroupHelpers.addToGroup(senderId, groupId, function(error, groupId) {
+        dbGroupHelpers.addToGroup(senderId, groupId, function(error) {
           if (error) { return response.status(500).json({error: 'User could not be added to group.'}); }
           response.status(200).json({groupId: groupId});
         });
@@ -144,21 +143,20 @@ module.exports = function(app, authController) {
       if (error) { throw error; }
       if (!groups) { throw error; }
       var done = false;
-      if (groups.length === 0){ response.status(200).send('no groups'); }
-      else {
-
+      if (groups.length === 0){
+        response.status(200).send('no groups');
+      } else {
         // Gets all the information for a group member
-        var getMembers = function(i, j, userId, membersIds) {
+        var getMembers = function(i, j, userId, membersIds, memberType) {
           dbUserHelpers.getUser(userId, 'user_id', function(error, member) {
             if (error) { throw error; }
 
             if(member){
-              groups[i].members = groups[i].members || [];
+              groups[i][memberType] = groups[i][memberType] || [];
               if(member.password !== undefined){ delete member.password; }
               if(member.token !== undefined){ delete member.token; }
-              groups[i].members.push(member);
+              groups[i][memberType].push(member);
             }
-
             if( (i === groups.length-1) && (j === membersIds.length - 1) ){
               if(done){ response.status(200).json({groups: groups}); }
               else{ done = true; }
@@ -177,8 +175,9 @@ module.exports = function(app, authController) {
             dbGroupHelpers.groupMembers(groups[i].group_id, i, function(error, membersIds, groupId, i) {
               if (error) { throw error; }
               if (!membersIds) { throw error; }
+              if (membersIds.length === 0){ done = true; }
               for (var j = 0; j < membersIds.length; j++) {
-                getMembers(i,j, membersIds[j].user_id, membersIds);
+                getMembers(i,j, membersIds[j].user_id, membersIds, "members");
               }
             });
 
@@ -186,8 +185,9 @@ module.exports = function(app, authController) {
             dbGroupHelpers.pendingGroupMembers(groups[i].group_id, i, function(error, pendingMembersIds, groupId, i) {
               if (error) { throw error; }
               if (!pendingMembersIds) { throw error; }
+              if (pendingMembersIds.length === 0){ done = true; }
               for (var j = 0; j < pendingMembersIds.length; j++) {
-                getMembers(i,j, pendingMembersIds[j].receiver_id, pendingMembersIds);
+                getMembers(i,j, pendingMembersIds[j].receiver_id, pendingMembersIds, "pendingMembers");
               }
             });
           });

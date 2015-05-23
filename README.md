@@ -200,9 +200,7 @@ Routes
 #####Response:
 ```
 {
-  "groupId": {
-    "?column?": 54
-  }
+  "groupId": 54
 }
 ```
 

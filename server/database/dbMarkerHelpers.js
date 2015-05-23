@@ -53,7 +53,6 @@ var getMarkers = function(userId, callback) {
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
-    console.log('---------------rows:', result.rows);
     // Convert the database format into the format used in the frontend
     result.rows = result.rows || [];
     for ( var i = 0; i < result.rows.length; i++ ) {
