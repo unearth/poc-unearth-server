@@ -17,12 +17,11 @@ Unearth
 ###Install npm dependencies
  - `npm install`
 
------------------------------
-
 Routes
-===========
+=============================
 
-#Signup
+
+##Signup
 ###Post /signup
 #####Headers:
  - Content-type: `application/json`
@@ -36,8 +35,15 @@ Routes
 }
 ```
 
+#####Response:
+```
+{
+  "token": "YOUR TOKEN HERE"
+}
+```
 
-#Login
+
+##Login
 ###Post /login
 #####Headers:
  - Content-type: `application/json`
@@ -50,17 +56,47 @@ Routes
 }
 ```
 
+#####Response:
+```
+{
+"token": "YOUR TOKEN HERE"
+}
+```
 
-#Logout
+
+##Logout
 ###Post /logout
 #####Headers:
  - Content-type: `application/json`
  - Authorization: `bearer YOURTOKENHERE`
 
-#Waypoints
+#####Response:
+```
+{
+  "success": "Session has been removed!"
+}
+```
+
+##Waypoints
 ###Get /waypoints
 #####Headers:
  - Authorization: `bearer + token`
+
+#####Response:
+```
+{
+  "waypoints": [
+    [
+      412.52341235234,
+      425.23421
+    ],
+    [
+     432.52341235234,
+     475.23421
+    ]
+  ]
+}
+```
 
 ###Post /waypoints
 #####Headers:
@@ -77,17 +113,75 @@ Routes
 }
 ```
 
-#Groups
+#####Response:
+```
+{
+  "success": "Waypoints have been posted!"
+}
+```
+
+##Groups
 ###Get /group
 #####Headers:
  - Content-type: `application/json`
  - Authorization: `bearer YOURTOKENHERE`
+
+#####Response:
+```
+{
+  "groups": [
+    {
+      "group_id": 54,
+      "name": "Thisisagroupname",
+      "description": "This is a cool group",
+      "members": [
+        {
+          "user_id": 4,
+          "email": "Melony@gmail.com",
+          "name": "Melony"
+        }
+      ],
+      "pendingMembers": [
+        {
+          "user_id": 5,
+          "email": "Ben@gmail.com",
+          "name": "Ben"
+        }
+      ]
+    }
+```
+
 
 ###Get /group/waypoints
 #####Headers:
  - Content-type: `application/json`
  - Authorization: `bearer YOURTOKENHERE`
  - groupId: 3
+
+#####Response:
+```
+{
+  "waypoints": [
+    {
+      "user_id": 4,
+      "waypoints": [
+        [
+          412.52341235234,
+          425.23421
+        ],
+        [
+          432.52341235234,
+          475.23421
+        ],
+        [
+          112.52341235234,
+          225.23421
+        ]
+      ]
+    }
+  ]
+}
+```
 
 ###Post /group/create
 #####Headers:
@@ -103,8 +197,17 @@ Routes
 }
 ```
 
+#####Response:
+```
+{
+  "groupId": {
+    "?column?": 54
+  }
+}
+```
 
-#Invitations
+
+##Invitations
 ###Post /group/invite
 #####Headers:
  - Content-type: `application/json`
@@ -142,7 +245,7 @@ Routes
 }
 ```
 
-#Markers
+##Markers
 ###Get /markers
 #####Headers:
  - Content-type: `application/json`
