@@ -1,5 +1,4 @@
-var userHelpers = require('../database/dbUserHelpers.js');
-var waypointsHelpers = require('../database/dbWaypointsHelpers.js');
+var dbHelpers = require('../database/dbHelpers.js');
 
 module.exports = function(app, authController) {
 
@@ -8,14 +7,22 @@ module.exports = function(app, authController) {
   app.get('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanitize. Expect starting waypoint id default to 0
-    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error}); }
+
+    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+      if (error) {
+        response.status(500).json({error: error});
+        return;
+      }
       if (!user) {
-        return response.status(409).json({error: 'This isn\'t an existing user!' });
+        response.status(409).json({error: 'This isn\'t an existing user!' });
+        return;
       }
 
-      waypointsHelpers.getWaypoints(user.user_id, function(error, waypoints) {
-        if (error) { return response.status(500).json({error: error}); }
+      dbHelpers.getWaypoints(user.user_id, function(error, waypoints) {
+        if (error) {
+          response.status(500).json({error: error});
+          return;
+        }
         response.status(200).json({waypoints: waypoints});
       });
     });
@@ -26,15 +33,24 @@ module.exports = function(app, authController) {
   app.post('/', authController.tokenAuth, function(request, response) {
 
     // TODO: Sanititze, Expect {waypoints:[]}
-    userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error});}
-      if(!request.body.waypoints || request.body.waypoints.length < 1 ) {
-        return response.status(409).json({error: 'There are no waypoints!'});
+
+    dbHelpers.getUser(request.unearth.token, 'token', function(error, user) {
+      if (error) {
+        response.status(500).json({error: error});
+        return;
       }
-      waypointsHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
-        if (error) { return response.status(500).json({error: error}); }
+      if(!request.body.waypoints || request.body.waypoints.length < 1 ) {
+        response.status(409).json({error: 'There are no waypoints!'});
+        return;
+      }
+      dbHelpers.addWaypoints(user.user_id, request.body.waypoints, function(error) {
+        if (error) {
+          response.status(500).json({error: error});
+          return;
+        }
         if (!user) {
-          return response.status(409).json({error: 'This isn\'t an existing user!'});
+          response.status(409).json({error: 'This isn\'t an existing user!'});
+          return;
         }
         response.status(200).json({success: 'Waypoints have been posted!'});
       });
