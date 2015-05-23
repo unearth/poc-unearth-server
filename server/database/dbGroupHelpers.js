@@ -61,7 +61,7 @@ var createGroup = function(groupName, groupDescription, callback) {
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
     var groupId = (result && result.rows[0]) ? result.rows[0] : null;
-    callback(null, groupId);
+    callback(null, groupId.group_id);
   });
 };
 

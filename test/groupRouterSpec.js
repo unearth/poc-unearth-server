@@ -42,7 +42,6 @@ describe('Group Router', function() {
               .set('Authorization', 'Bearer ' + response.body.token)
               .end( function(error, response) {
                 if (error) { throw error; }
-                console.log(response);
                 expect(response.statusCode).to.equal(200);
                 done();
               });
@@ -69,7 +68,6 @@ describe('Group Router', function() {
           .end( function(error, response) {
             if (error) { throw error; }
             expect(response.statusCode).to.equal(200);
-            console.log(response);
             // Sends an invite
             request(app)
               .post('/group/invite')
