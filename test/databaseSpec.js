@@ -10,7 +10,7 @@ var expect = chai.expect;
 
 dbHelpers.clearTables();
 
-describe('Database ', function() {
+xdescribe('Database ', function() {
   var userId = null;
 
   it('should add a user to the database and return its user ID', function(done) {
@@ -36,7 +36,7 @@ describe('Database ', function() {
   });
 });
 
-describe('Database - Waypoints', function() {
+xdescribe('Database - Waypoints', function() {
   it('should insert and retreive waypoints to and from the database', function(done) {
     var user = test.users[1];
     var testPoints = test.waypoints(1);
@@ -63,3 +63,4 @@ describe('Database - Waypoints', function() {
     });
   });
 });
+

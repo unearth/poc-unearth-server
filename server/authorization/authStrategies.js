@@ -84,6 +84,8 @@ passport.use( 'login-local', new LocalStrategy({
 
       // No user found with that email
       if (!user) {return done(null, false);}
+      console.log(password);
+      console.log(user.password);
 
       // Makes sure the password is correct
       if( !authUtils.validPassword(password, user.password) ) {

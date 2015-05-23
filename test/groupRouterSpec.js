@@ -19,7 +19,7 @@ describe('Group Router', function() {
     // Signs up
     request(app)
       .post('/signup')
-      .send(test.users[3])
+      .send(test.users[1])
       .set('Accept', 'application/json')
       .end( function(error, response) {
         if (error) { throw error; }
@@ -119,7 +119,7 @@ describe('Group Router', function() {
     // Signs up
     request(app)
       .post('/login')
-      .send(test.users[3])
+      .send(test.users[1])
       .set('Accept', 'application/json')
       .end( function(error, response) {
         if (error) { throw error; }
