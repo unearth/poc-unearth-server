@@ -7,6 +7,9 @@ var assert = chai.assert;
 var should = chai.should();
 var expect = chai.expect;
 
+var dbHelpers = require('../server/database/dbHelpers');
+dbHelpers.clearTables();
+
 describe('Group Router', function() {
 
   var testPoints = test.waypoints(3);
@@ -51,50 +54,40 @@ describe('Group Router', function() {
 
     // Logs in
     request(app)
-      .post('/signup')
-      .send(test.users[1])
+      .post('/login')
+      .send(test.users[4])
       .set('Accept', 'application/json')
       .end( function(error, response) {
         if (error) { throw error; }
         expect(response.statusCode).to.equal(200);
         expect(response.body.token).to.be.a('string');
-
+        var token = response.body.token;
+        // Sends an invite
         request(app)
-          .post('/login')
-          .send(test.users[4])
-          .set('Accept', 'application/json')
+          .get('/group')
+          .set('Authorization', 'Bearer ' + token)
           .end( function(error, response) {
             if (error) { throw error; }
             expect(response.statusCode).to.equal(200);
-            expect(response.body.token).to.be.a('string');
-
+            console.log(response);
             // Sends an invite
             request(app)
-              .get('/group')
-              .set('Authorization', 'Bearer ' + response.body.token)
+              .post('/group/invite')
+              .send({
+                email: "Melony@gmail.com",
+                groupId: 1
+              })
+              .set('Authorization', 'Bearer ' + token)
               .end( function(error, response) {
                 if (error) { throw error; }
                 expect(response.statusCode).to.equal(200);
-                console.log(response);
-                // Sends an invite
-                request(app)
-                  .post('/group/invite')
-                  .send({
-                    email: "Melony@gmail.com",
-                    groupId: 1
-                  })
-                  .set('Authorization', 'Bearer ' + response.body.token)
-                  .end( function(error, response) {
-                    if (error) { throw error; }
-                    expect(response.statusCode).to.equal(200);
-                    done();
-                  });
+                done();
               });
           });
       });
   });
 
-  xit('should accept an invitation to a group', function(done) {
+  it('should accept an invitation to a group', function(done) {
 
     // Logs in
     request(app)
@@ -111,6 +104,7 @@ describe('Group Router', function() {
           .post('/group/accept')
           .send(test.groups[0])
           .set('Authorization', 'Bearer ' + response.body.token)
+          .send({'groupId': 1})
           .end( function(error, response) {
             if (error) { throw error; }
             expect(response.statusCode).to.equal(200);
@@ -120,7 +114,7 @@ describe('Group Router', function() {
   });
 
 
-  xit('should get groups', function(done) {
+  it('should get groups', function(done) {
 
     // Signs up
     request(app)
@@ -132,24 +126,14 @@ describe('Group Router', function() {
         expect(response.statusCode).to.equal(200);
         expect(response.body.token).to.be.a('string');
 
+        // Makes a group
         request(app)
-          .post('/login')
-          .send(test.users[4])
-          .set('Accept', 'application/json')
+          .get('/group')
+          .set('Authorization', 'Bearer ' + response.body.token)
           .end( function(error, response) {
             if (error) { throw error; }
             expect(response.statusCode).to.equal(200);
-            expect(response.body.token).to.be.a('string');
-
-            // Makes a group
-            request(app)
-              .post('/group')
-              .set('Authorization', 'Bearer ' + response.body.token)
-              .end( function(error, response) {
-                if (error) { throw error; }
-                expect(response.statusCode).to.equal(200);
-                done();
-              });
+            done();
           });
       });
   });
