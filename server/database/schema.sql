@@ -78,8 +78,8 @@ CREATE TABLE markers (
   "group_id" INTEGER NOT NULL,
   "user_id" INTEGER NOT NULL,
   "location" POINT NOT NULL,
-  "description" TEXT NOT NULL,
-  "image_url" TEXT NOT NULL,
+  "description" TEXT,
+  "image_url" TEXT,
   "name" TEXT NOT NULL,
   FOREIGN KEY ("group_id") REFERENCES groups ("group_id"),
   FOREIGN KEY ("user_id") REFERENCES users ("user_id")

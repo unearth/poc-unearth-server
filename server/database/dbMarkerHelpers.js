@@ -15,10 +15,8 @@ var addMarkers = function(userId, markers, callback) {
     // Reject if a required item is undefined
     if( (markers[i].name === undefined) ||
         (markers[i].location === undefined) ||
-        (markers[i].groupId  === undefined) ||
-        (markers[i].imageUrl === undefined) ||
-        (markers[i].description === undefined) ){
-      callback(error, null);
+        (markers[i].groupId  === undefined)){
+      callback("Undefined properties");
       return;
     }
 

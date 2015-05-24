@@ -21,11 +21,8 @@ var deleteInvite = function(userId, groupId, callback) {
 
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
-    if(result.rowCount === 0){
-      callback(error);
-    }else{
-      callback(null, result);
-    }
+    if(result.rowCount === 0){ return callback(error); }
+    callback(null, result);
   });
 };
 
@@ -101,7 +98,7 @@ var groupInformation  = function(groupId, callback) {
   });
 };
 
-var groupMembers = function(groupId, i, callback) {
+var groupMembers = function(groupId, callback) {
   callback = callback || function(value) { return value; };
   var query = 'SELECT user_id FROM group_join WHERE group_id = $1';
   var params = [groupId];
@@ -109,7 +106,7 @@ var groupMembers = function(groupId, i, callback) {
   dbUtils.makeQuery(query, params, function(error, result) {
     if (error) { return dbUtils.handleError(error, callback); }
     var group = (result && result.rows) ? result.rows : null;
-    callback(null, group, groupId, i);
+    callback(null, group, groupId);
   });
 };
 
