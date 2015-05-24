@@ -172,7 +172,7 @@ module.exports = function(app, authController) {
             groups[i].description = groupInfo[0].description;
 
             // Gets the current members
-            dbGroupHelpers.groupMembers(groups[i].group_id, i, function(error, membersIds, groupId, i) {
+            dbGroupHelpers.groupMembers(groups[i].group_id, function(error, membersIds, groupId) {
               if (error) { throw error; }
               if (!membersIds) { throw error; }
               if (membersIds.length === 0){ done = true; }
