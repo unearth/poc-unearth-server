@@ -37,13 +37,21 @@ module.exports = function(app, authController) {
 
     // TODO: Sanititze, Expect {markers:[]}
     userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
-      if (error) { return response.status(500).json({error: error});}
+      if (error) {
+        console.log('error with token')
+        return response.status(500).json({error: error});
+      }
       if(!request.body.markers || request.body.markers.length < 1 ) {
+        console.log('There are no markers');
         return response.status(409).json({error: 'There are no markers!'});
       }
       var body = request.body;
+      console.log('user: ', user, ' || body: ', body);
       markerHelpers.addMarkers(user.user_id, body.markers, function(error) {
-        if (error) { return response.status(500).json({error: error}); }
+        if (error) {
+          console.log('Error adding marker to db');
+          return response.status(500).json({error: error});
+        }
         if (!user) {
           return response.status(409).json({error: 'This isn\'t an existing user!'});
         }
