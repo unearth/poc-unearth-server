@@ -38,7 +38,7 @@ module.exports = function(app, authController) {
     // TODO: Sanititze, Expect {markers:[]}
     userHelpers.getUser(request.unearth.token, 'token', function(error, user) {
       if (error) {
-        console.log('error with token')
+        console.log('error with token');
         return response.status(500).json({error: error});
       }
       if(!request.body.markers || request.body.markers.length < 1 ) {
