@@ -38,7 +38,9 @@ var addMarkers = function(userId, markers, callback) {
   }
 
   dbUtils.makeQuery(query, params, function(error, result) {
-    if (error) { return dbUtils.handleError(error, callback); }
+    if (error) {
+      return dbUtils.handleError(error, callback);
+    }
     callback(null, result);
   });
 };

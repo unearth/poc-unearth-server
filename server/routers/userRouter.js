@@ -13,7 +13,7 @@ module.exports = function(app, authController) {
   app.post('/signup', authController.signupAuth, function(request, response) {
 
     // TODO: Sanitize.  Expect email string and a password string
-    if (request.unearth.error) {return response.status(403).json({error: request.unearth.error}); }
+    if (request.unearth.error) {console.log(request.unearth.error); return response.status(403).json({error: request.unearth.error}); }
 
     response.status(200).json({token: request.unearth.token});
   });
