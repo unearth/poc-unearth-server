@@ -41,9 +41,9 @@ passport.use( 'signup', new LocalStrategy({
 
       userHelpers.addUser(email, request.body.name, authUtils.hash(password), function(error, user) {
 
-        console.log(error);
         // Sends an error if the database request fails
         if (error) {
+          console.log(error);
           request.unearth.error = 'The request has failed!';
           return done(null, true);
         }
