@@ -1,14 +1,17 @@
-[![Stories in Ready](https://badge.waffle.io/unearth/unearth.png?label=ready&title=Ready)](https://waffle.io/unearth/unearth)
-# Unearth
+# Proof of Concept - Unearth Server
 
-#Steps to install:
+The server for the original Unearth proof of concept.
 
-###Add a config file
+This repository is not under active development, and is purely for archival purposes.
+
+## Steps to install:
+
+### Add a config file
  - Copy `server/config.example.js` into a new `server/config.js`
  - Add database path
 
-###Install the grunt-cli
+### Install the grunt-cli
   `npm install -g grunt-cli`
 
-###Install npm dependencies
+### Install npm dependencies
   `npm install`
